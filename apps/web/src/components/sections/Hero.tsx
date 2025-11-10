@@ -8,7 +8,7 @@ import { Button } from '../ui/Button';
 import { AnimatedCounters } from './AnimatedCounters';
 
 export function Hero() {
-  const headline = 'Transform Your Business with Cutting-Edge Solutions';
+  const headline = 'Внедряем Мой Склад, Битрикс24 и телефонию для вашего бизнеса';
   const { displayText, isComplete } = useTypewriter(headline, 80);
 
   const scrollToSection = (sectionId: string) => {
@@ -23,9 +23,9 @@ export function Hero() {
 
   // Stats data for animated counters
   const stats = [
-    { value: 500, label: 'Happy Clients', suffix: '+' },
-    { value: 1000, label: 'Projects Completed', suffix: '+' },
-    { value: 99, label: 'Client Satisfaction', suffix: '%' },
+    { value: 500, label: 'Довольных клиентов', suffix: '+' },
+    { value: 1000, label: 'Успешных внедрений', suffix: '+' },
+    { value: 99, label: 'Успешность проектов', suffix: '%' },
   ];
 
   return (
@@ -66,8 +66,8 @@ export function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.8 }}
           >
-            We deliver innovative cloud solutions, seamless integrations, and cutting-edge technology
-            to accelerate your business growth in the digital age.
+            Официальный партнер Мой Склад и Битрикс24 в Казахстане.
+            Автоматизируем складской и торговый учет, внедряем CRM и телефонию под ключ.
           </motion.p>
 
           {/* CTA Buttons */}
@@ -82,17 +82,17 @@ export function Hero() {
               size="lg"
               glow="large"
               onClick={() => scrollToSection('#contact')}
-              className="min-w-[200px]"
+              className="min-w-[220px]"
             >
-              Get Started Today
+              Получить консультацию
             </Button>
             <Button
               variant="neon"
               size="lg"
               onClick={() => scrollToSection('#services')}
-              className="min-w-[200px]"
+              className="min-w-[220px]"
             >
-              Explore Services
+              Наши решения
             </Button>
           </motion.div>
 

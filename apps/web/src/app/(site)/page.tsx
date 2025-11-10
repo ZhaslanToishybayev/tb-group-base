@@ -9,6 +9,9 @@ import {
   type ClientLogo,
 } from '../../components/home';
 import { Hero } from '../../components/sections/Hero';
+import { CompanyInfoSection } from '../../components/sections/CompanyInfoSection';
+import { ServicesOverviewSection } from '../../components/sections/ServicesOverviewSection';
+import { CasesSection } from '../../components/sections/CasesSection';
 import {
   ServicesSection,
   TestimonialsSection,
@@ -30,32 +33,44 @@ export const metadata: Metadata = {
 
 const defaultAdvantages: Advantage[] = [
   {
+    title: 'Официальный партнер Мой Склад и Битрикс24',
+    description: 'Сертифицированные специалисты с опытом внедрения более 5 лет. Все необходимые сертификаты и официальная поддержка от разработчиков.',
+  },
+  {
     title: 'Комплексное внедрение «под ключ»',
-    description: 'Проектируем архитектуру, настраиваем интеграции и обучаем сотрудников, чтобы команда сразу работала в новой системе.',
+    description: 'От анализа бизнес-процессов до обучения сотрудников. Настраиваем интеграции между системами и автоматизируем рутину.',
   },
   {
-    title: 'Гарантируем быстрый эффект',
-    description: 'Показываем измеримый рост эффективности уже в первые недели — фиксируем KPI и сопровождаем по SLA.',
+    title: 'Гарантируем результат',
+    description: 'Фиксируем KPI в договоре. Обычно клиенты видят эффект уже в первые 2-3 недели после внедрения.',
   },
   {
-    title: 'Прозрачная коммуникация',
-    description: 'Закрепляем проектного менеджера, ведём единый контур в Bitrix24 и предоставляем понятный план миров.',
+    title: 'Поддержка 24/7',
+    description: 'Техническая поддержка и сопровождение после внедрения. Отвечаем на вопросы и помогаем оптимизировать процессы.',
+  },
+  {
+    title: 'Работаем по всей территории Казахстана',
+    description: 'Офисы в Нур-Султане и Алматы. Выезжаем в любой город. Удаленная поддержка и сопровождение для регионов.',
   },
 ];
 
 const defaultClientLogos: ClientLogo[] = [
-  { name: 'SaaS Group', logoUrl: '' },
-  { name: 'Logist Pro', logoUrl: '' },
-  { name: 'Retail Hub', logoUrl: '' },
-  { name: 'FinTech One', logoUrl: '' },
+  { name: 'Торговая сеть «Пятёрочка KZ»', logoUrl: '' },
+  { name: 'Металлург Казахстан', logoUrl: '' },
+  { name: 'Kaspi.kz', logoUrl: '' },
+  { name: 'Метрополис', logoUrl: '' },
+  { name: 'Technodom', logoUrl: '' },
+  { name: 'Семейный Торговый Центр', logoUrl: '' },
+  { name: 'Национальный Банк РК', logoUrl: '' },
+  { name: 'Air Astana', logoUrl: '' },
 ];
 
 // Stats for the StatsGrid component
 const stats = [
   { id: '1', value: 500, label: 'Довольных клиентов', suffix: '+', color: 'primary' as const },
-  { id: '2', value: 1000, label: 'Завершенных проектов', suffix: '+', color: 'secondary' as const },
-  { id: '3', value: 99, label: 'Удовлетворенность клиентов', suffix: '%', color: 'success' as const },
-  { id: '4', value: 24, label: 'Часа поддержки в день', suffix: '/7', color: 'neon' as const },
+  { id: '2', value: 1000, label: 'Успешных внедрений', suffix: '+', color: 'secondary' as const },
+  { id: '3', value: 99, label: 'Успешность проектов', suffix: '%', color: 'success' as const },
+  { id: '4', value: 24, label: 'Часа поддержки', suffix: '/7', color: 'neon' as const },
 ];
 
 // Mock blog posts for demo
@@ -135,6 +150,11 @@ export default async function HomePage() {
     <>
       <div id="main-content">
         <Hero />
+        <CompanyInfoSection />
+        <ServicesOverviewSection />
+        <CasesSection />
+
+        <ClientLogosMarquee logos={logos} />
 
         <ServicesSection services={safeServices} />
 

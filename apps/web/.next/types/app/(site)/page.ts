@@ -1,4 +1,4 @@
-// File: /home/zhaslan/Downloads/Telegram Desktop/tbgroup 30.10/base-stack-v0.2.2/apps/web/src/app/(site)/page.tsx
+// File: /home/zhaslan/Downloads/tb-group-base-current-changes-backup/apps/web/src/app/(site)/page.tsx
 import * as entry from '../../../../src/app/(site)/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
