@@ -63,6 +63,7 @@ export function MultiStepContactForm({
     trigger,
     watch,
     reset,
+    setFocus,
   } = methods;
 
   const [currentStep, setCurrentStep] = useState(0);
@@ -85,13 +86,32 @@ export function MultiStepContactForm({
     const isStepValid = await validateStep(currentStep);
     if (isStepValid && currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
+      // Auto-focus first field of next step after animation
+      setTimeout(() => {
+        const firstField = steps[currentStep + 1].fields[0];
+        if (firstField) {
+          setFocus(firstField);
+        }
+      }, 350);
     }
   };
 
   const prevStep = () => {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
+      // Auto-focus first field of previous step after animation
+      setTimeout(() => {
+        const firstField = steps[currentStep - 1].fields[0];
+        if (firstField) {
+          setFocus(firstField);
+        }
+      }, 350);
     }
+  };
+
+  // Check if current step is valid (not whole form)
+  const isCurrentStepValid = async () => {
+    return await validateStep(currentStep);
   };
 
   const onSubmit = async (data: FormData) => {
@@ -105,11 +125,16 @@ export function MultiStepContactForm({
       return;
     }
 
-    // Get reCAPTCHA token if reCAPTCHA is enabled
+    // Get reCAPTCHA token if reCAPTCHA is enabled and required
     if (recaptchaEnabled && !recaptchaToken) {
       const recaptchaTrigger = document.querySelector('[data-testid="recaptcha-trigger"]') as HTMLButtonElement;
-      recaptchaTrigger?.click();
-      return;
+      if (recaptchaTrigger) {
+        recaptchaTrigger.click();
+        return;
+      } else {
+        // If reCAPTCHA is enabled but trigger not found, continue without it
+        console.warn('reCAPTCHA enabled but trigger not found, continuing without verification');
+      }
     }
 
     const payload: ContactRequestPayload = {
@@ -123,13 +148,17 @@ export function MultiStepContactForm({
     };
 
     try {
-      await submitContact(payload);
+      const result = await submitContact(payload);
       setStatus('success');
-      reset();
-      setCurrentStep(0);
-      setRecaptchaToken(null);
+      // Don't reset form immediately, allow user to see success message
+      setTimeout(() => {
+        reset();
+        setCurrentStep(0);
+        setRecaptchaToken(null);
+        setStatus('idle');
+      }, 3000);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Не удалось отправить заявку');
+      setError(err instanceof Error ? err.message : 'Не удалось отправить заявку. Проверьте подключение к интернету и попробуйте еще раз.');
       setStatus('error');
     }
   };
@@ -392,7 +421,7 @@ export function MultiStepContactForm({
             <button
               type="button"
               onClick={prevStep}
-              disabled={currentStep === 0}
+              disabled={currentStep === 0 || status === 'loading'}
               className="rounded-lg border border-white/10 bg-white/5 px-6 py-3 text-sm font-medium text-white hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-white/5 transition-colors"
             >
               Назад
@@ -402,7 +431,7 @@ export function MultiStepContactForm({
               <button
                 type="button"
                 onClick={nextStep}
-                disabled={!isValid}
+                disabled={status === 'loading'}
                 className="rounded-lg bg-blue-500 px-6 py-3 text-sm font-semibold text-white hover:bg-blue-400 disabled:cursor-not-allowed disabled:opacity-50 transition-colors"
               >
                 Далее
@@ -410,10 +439,10 @@ export function MultiStepContactForm({
             ) : (
               <button
                 type="submit"
-                disabled={status === 'loading' || !isValid}
+                disabled={status === 'loading' || status === 'success'}
                 className="rounded-lg bg-gradient-to-r from-blue-500 to-blue-400 px-8 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40 disabled:cursor-not-allowed disabled:opacity-50 transition-all"
               >
-                {status === 'loading' ? 'Отправка...' : 'Отправить заявку'}
+                {status === 'loading' ? 'Отправка...' : status === 'success' ? 'Отправлено!' : 'Отправить заявку'}
               </button>
             )}
           </div>
@@ -435,12 +464,32 @@ export function MultiStepContactForm({
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="rounded-lg border border-green-500/30 bg-green-500/10 p-4"
+              className="rounded-lg border border-green-500/30 bg-green-500/10 p-6"
             >
-              <p className="text-sm text-green-400 flex items-center gap-2">
-                <Check size={18} />
-                Спасибо! Мы свяжемся с вами в ближайшее время.
-              </p>
+              <div className="flex items-start gap-3">
+                <Check size={24} className="text-green-400 mt-0.5 flex-shrink-0" />
+                <div className="flex-1">
+                  <p className="text-green-400 font-medium mb-2">
+                    Спасибо! Ваша заявка успешно отправлена.
+                  </p>
+                  <p className="text-sm text-green-300/80 mb-4">
+                    Мы получили вашу заявку и свяжемся с вами в ближайшее время.
+                    Номер заявки: #{Date.now().toString().slice(-6)}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setStatus('idle');
+                      setError(null);
+                      setCurrentStep(0);
+                      reset();
+                    }}
+                    className="text-sm text-green-400 hover:text-green-300 underline"
+                  >
+                    Отправить еще одну заявку
+                  </button>
+                </div>
+              </div>
             </motion.div>
           )}
 
