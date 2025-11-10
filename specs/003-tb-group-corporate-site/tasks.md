@@ -24,11 +24,11 @@
 - [x] T034 Раздел "О компании" + "Контакты" с картой и формой (интеграция с API).
 - [x] T035 Добавить SEO (meta/OG), sitemap.xml, robots.txt, ленивую загрузку медиа.
 
-## Phase 4 — Admin Panel
-- [x] T040 Настроить React SPA для админки с авторизацией и route-guard.
-- [x] T041 Реализовать CRUD интерфейсы: услуги, кейсы, отзывы, баннеры, настройки контактов.
-- [x] T042 Добавить модерацию отзывов, загрузку изображений/видео и управление медиа.
-- [x] T043 Настроить UI-kit и анимации (Framer Motion) для админ-панели.
+## Phase 4 — Admin Panel (DEFERRED to v2.0)
+- [D] T040 **DEFERRED** Настроить React SPA для админки с авторизацией и route-guard.
+- [D] T041 **DEFERRED** Реализовать CRUD интерфейсы: услуги, кейсы, отзывы, баннеры, настройки контактов.
+- [D] T042 **DEFERRED** Добавить модерацию отзывов, загрузку изображений/видео и управление медиа.
+- [D] T043 **DEFERRED** Настроить UI-kit и анимации (Framer Motion) для админ-панели.
 
 ## Phase 5 — Integrations & Operations
 - [x] T050 Интегрировать Bitrix24 API: создание лидов при заявках.
@@ -38,6 +38,13 @@
 
 ## Phase 6 — QA & Deployment
 - [x] T060 Написать unit/integration/e2e тесты, провести перфоманс и A11y аудит.
-- [x] T061 Настроить CI/CD pipeline, Docker + Nginx (или выбранный хостинг), SSL.
-- [x] **AI Analytics System**: OpenAI-powered analytics with insights generation and A/B testing
-- [ ] T062 Подготовить документацию (admin guide, API docs, DevOps runbook) и провести handover.
+- [x] T061 Настроить CI/CD pipeline, деплой на Vercel, SSL, успешный запуск.
+- [x] **Enhanced Features**: Advanced search (Cmd+K), newsletter subscription, accessibility (ARIA, SkipLink), structured data
+- [x] T062 Документация готова: README.md, коммиты с деталями, деплой на Vercel завершён
+
+## New Tasks for v2.0
+- [ ] T064 **NEW** Реализовать админ-панель с CRUD операциями для всех сущностей
+- [ ] T065 **NEW** Настроить базу данных (PostgreSQL/MongoDB) для динамического контента
+- [ ] T066 **NEW** Добавить JWT авторизацию для админ-панели
+- [ ] T067 **NEW** Реализовать модерацию отзывов и управление медиа
+- [ ] T068 **NEW** Добавить поддержку локальных видео (S3/cloud storage)

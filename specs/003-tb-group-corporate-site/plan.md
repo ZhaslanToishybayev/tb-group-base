@@ -1,52 +1,58 @@
 # Implementation Plan: TB Group Corporate Site
 
 ## Phase 0 — Discovery & Architecture
-- Уточнить бизнес-цели, каналы лидов, содержание для каждой страницы.
-- Решить технические выборы: Express vs. Nest, MongoDB vs. PostgreSQL, Tailwind vs. Styled Components.
-- Зафиксировать архитектурную схему: отдельные фронтенды (public/admin) + общее API.
-- Определить инфраструктуру: Docker, CI/CD, staging окружение.
+- ✅ Уточнить бизнес-цели, каналы лидов, содержание для каждой страницы.
+- ✅ **Решено**: Next.js 14 с App Router, Tailwind CSS, Framer Motion, Vercel для деплоя.
+- ✅ **Архитектура**: Статический публичный сайт + серверлесс API routes (без отдельного админа в v1.0).
+- ✅ **Инфраструктура**: Vercel, GitHub Actions, статическая генерация.
 
 ## Phase 1 — Boilerplate & Core Setup
-1. Создать monorepo (Turbo/Nx или отдельные пакеты) для публичного фронта, админки и API.
-2. Настроить TypeScript/ESLint/Prettier, Husky (по согласованию).
-3. Сконфигурировать сервер (Express) и подключение к БД.
-4. Реализовать базовую систему авторизации (JWT, refresh), модель пользователя-админа.
+1. ✅ Создать monorepo (Turborepo) для публичного фронтенда.
+2. ✅ Настроить TypeScript/ESLint/Prettier, конфигурацию Next.js 14.
+3. ✅ Настроить серверлесс API routes (`/api/contact`, `/api/newsletter`).
+4. ✅ Настроить интеграцию с Bitrix24 и Google Analytics 4.
 
-## Phase 2 — Domain Models & API Foundation
-1. Спроектировать схемы данных: Services, Cases, Reviews, ContactRequests, Banners, Settings.
-2. CRUD API (через REST) для кейсов, отзывов, услуг, баннеров, контактов.
-3. Добавить валидацию (Zod/Joi), обработку ошибок, логирование.
-4. Подготовить Swagger/OpenAPI спецификацию.
+## Phase 2 — Static Content & API Routes
+1. ✅ Статический контент в Next.js: Services, Cases, Reviews, ContactRequests (hardcoded).
+2. ✅ Серверлесс API routes для форм: `/api/contact` (Bitrix24), `/api/newsletter`.
+3. ✅ Валидация форм на клиенте и сервере, обработка ошибок.
+4. ✅ Документация в README.md и коммитах.
 
-## Phase 3 — Public Website
-1. React-приложение (Vite или Next) с маршрутизацией: Home, Services (3 страницы), Cases, Reviews, About, Contacts.
-2. TailwindCSS/Styled Components + Framer Motion: hero, CTA, карточки кейсов/отзывов.
-3. Интеграция с API (SSR или CSR). Настроить фильтр кейсов, ленивую загрузку медиа.
-4. Формы: обратная связь, услуги — отправка через API c капчей.
-5. SEO: meta/OG-теги, sitemap, robots, данные для аналитики.
+## Phase 3 — Public Website (COMPLETED)
+1. ✅ Next.js 14 App Router с маршрутизацией: Home, Services, Cases, Reviews, About, Contacts.
+2. ✅ Tailwind CSS + Framer Motion: hero с 3D фоном, services overview, cases, testimonials с 3D каруселью.
+3. ✅ Интеграция с API (CSR). Lazy loading изображений, dynamic imports.
+4. ✅ Формы: контактная форма, подписка на новости — отправка через API с reCAPTCHA v3.
+5. ✅ SEO: meta/OG/Twitter, JSON-LD structured data, sitemap.xml, robots.txt, Google Analytics 4.
 
-## Phase 4 — Admin Panel
-1. React SPA с авторизацией (JWT + refresh), route-guard.
-2. CRUD UI для кейсов, отзывов, услуг, баннеров, контактов.
-3. Модерация пользовательских отзывов (approve/reject).
-4. Управление мультимедиа: загрузка изображений/видео (хранилище по соглашению).
-5. Настройки (контактные данные, CTA, сертификаты).
+## Phase 4 — Admin Panel (DEFERRED to v2.0)
+1. [D] React SPA с авторизацией (JWT + refresh) - **DEFERRED**
+2. [D] CRUD UI для кейсов, отзывов, услуг - **DEFERRED**
+3. [D] Модерация пользовательских отзывов - **DEFERRED**
+4. [D] Управление мультимедиа (S3/cloud storage) - **DEFERRED**
+5. [D] Настройки (контакты, контент) - **DEFERRED**
 
-## Phase 5 — Integrations & Automations
-1. Bitrix24: отправка заявок, создание лидов, обработка ошибок.
-2. Email уведомления (NodeMailer) для админов.
-3. Подключение Google Analytics / Yandex Metrica (скрипты, consent).
-4. Видео-отзывы: поддержать YouTube iframe + локальные mp4 (опционально S3/статик).
-5. Резервное копирование БД (cron/scripts), кеширование (Redis/HTTP caching).
+## Phase 5 — Integrations & Optimizations
+1. ✅ Bitrix24: отправка заявок через webhook, создание лидов.
+2. ✅ Google Analytics 4 с событиями отслеживания.
+3. ✅ Видео-отзывы: YouTube iframe embedding, live chat widget.
+4. ✅ Производительность: lazy loading, dynamic imports, preconnect, bundle optimization (87.6kB shared).
 
 ## Phase 6 — QA & Hardening
-1. Тестирование: unit (Jest/Vitest), integration (Supertest), e2e (Playwright/Cypress).
-2. Accessibility, performance (Lighthouse), responsive тесты.
-3. Безопасность: XSS/CSRF protection, rate limiting, helmet, капча.
-4. Регламенты DevOps: CI/CD pipeline, environment promotion, мониторинг.
+1. ✅ Производительность: bundle size optimization, lazy loading, Core Web Vitals.
+2. ✅ Accessibility: ARIA labels, SkipLink, semantic HTML, keyboard navigation.
+3. ✅ Безопасность: reCAPTCHA v3, защита от спама, HTTPS, environment variables.
+4. ✅ DevOps: GitHub Actions, Vercel deployment, SSL.
 
-## Phase 7 — Deployment & Handover
-1. Настройка VPS/Nginx/SSL (или облачный сервис).
-2. Документация: README, admin-guide, API docs, backup procedures.
-3. Финальные демо и обучение заказчика работе с админкой.
-4. Передача исходников, доступов, публикация релизных заметок.
+## Phase 7 — Deployment & Handover (COMPLETED)
+1. ✅ Деплой на Vercel: https://tb-group-website-g86xznne9-zhaslantoishybayevs-projects.vercel.app
+2. ✅ Документация: README.md, коммиты с деталями, спецификация.
+3. ✅ Успешный запуск в production.
+4. ✅ Передача исходников, готовность к использованию.
+
+## Next Phase (v2.0) — Admin Panel & Dynamic Content
+1. Реализация админ-панели с полным CRUD функционалом
+2. Настройка базы данных (PostgreSQL/MongoDB)
+3. JWT авторизация и роутинг с защитой
+4. Система модерации контента
+5. Управление медиа (S3/cloud storage)

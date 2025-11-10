@@ -6,12 +6,12 @@ TB Group needs корпоративный сайт, который презен�
 ## Goals & Success Criteria
 - Публичный сайт с разделами: Главная, Услуги (3 страницы), Кейсы, Отзывы, О компании, Контакты.
 - Форма заявки → создание лида в Bitrix24 и уведомление по email.
-- Админ-панель для управления контентом (кейсы, отзывы, услуги, баннеры, контакты).
-- SEO-базис: meta/OG-теги, sitemap, robots, быстрая загрузка (lazy-loading, кеш).
-- Видео-отзывы с поддержкой YouTube и локальных файлов.
-- Адаптивность, современный дизайн (Tailwind/Styled Components + Framer Motion).
-- Бэкенд: Node.js + Express (или Nest по итоговой оценке) и БД (MongoDB или PostgreSQL).
-- Без CMS; всё редактирование через кастомную админку.
+- **Deffered**: Админ-панель для управления контентом (кейсы, отзывы, услуги, баннеры, контакты) - будет реализована в следующей итерации.
+- **SEO-базис**: meta/OG-теги, structured data (JSON-LD), sitemap.xml, robots.txt, быстрая загрузка (LCP <2.5s, lazy-loading, dynamic imports).
+- Видео-отзывы с поддержкой YouTube и локальных файлов (через S3/cloud storage).
+- Адаптивность, современный дизайн (Tailwind CSS + Framer Motion).
+- **Архитектура**: Next.js 14 с App Router и серверлесс API routes; без отдельного backend сервера.
+- Без внешней БД; статическая генерация с API routes для форм.
 
 ## Non-Goals / Out of Scope
 - Автоматическая выставка счетов и биллинговые процессы.
@@ -25,33 +25,34 @@ TB Group needs корпоративный сайт, который презен�
 
 ## Key Features
 1. **Публичный сайт**: hero/CTA, преимущества, услуги, фильтруемые кейсы, отзывы (текст/видео), блок «О компании», контакты с картой и формой.
-2. **Админ-панель**: авторизация, CRUD для кейсов/отзывов/услуг, управление баннерами и контактами, модерация пользовательских отзывов.
-3. **API**: REST (или GraphQL) с эндпоинтами `/api/cases`, `/api/reviews`, `/api/services`, `/api/contact`, `/api/auth`.
-4. **Интеграции**: отправка форм в Bitrix24, email-уведомления, аналитика (GA/ЯМ), видео-отзывы.
-5. **Инфраструктура**: деплой на VPS/облако, резервное копирование БД, HTTPS, защита от XSS/SQL-инъекций, капча.
+2. **Deffered**: Админ-панель - будет реализована в следующей итерации (v2.0).
+3. **API**: Next.js серверлесс routes с эндпоинтами `/api/contact`, `/api/newsletter`.
+4. **Интеграции**: отправка форм в Bitrix24 (https://tbgroup.bitrix24.kz/rest/18/...), email-уведомления, Google Analytics 4, видео-отзывы.
+5. **Инфраструктура**: деплой на Vercel, статическая генерация, HTTPS, защита от XSS/CSRF, reCAPTCHA v3, оптимизация производительности (lazy loading, dynamic imports).
 
 ## Constraints & Assumptions
-- Стек: React (ES6+), TailwindCSS или Styled Components, Node.js + Express, MongoDB или PostgreSQL (решить на этапе архитектуры).
-- JWT авторизация, хранение секретов в `.env`, SSL обязателен.
-- Серверная интеграция с Bitrix24 требует актуальных API-ключей.
-- Дизайн создаётся с нуля, UI-kit формируется в ходе проекта.
+- **Стек**: Next.js 14 с App Router, TypeScript, Tailwind CSS, Framer Motion, Vercel для деплоя.
+- **Без внешней БД**: статический контент, API routes для форм и подписки.
+- **Безопасность**: хранение секретов в `.env`, HTTPS обязательно, reCAPTCHA v3.
+- **Bitrix24**: webhook URL: https://tbgroup.bitrix24.kz/rest/18/kjdwaeorinhxto5q/ (для создания лидов).
+- **Производительность**: LCP < 2.5s, FID < 100ms, CLS < 0.1, First Load JS < 200kB.
+- **Дизайн**: темная тема с градиентами, UI-kit на основе Tailwind + Framer Motion.
 
 ## Implementation Status (as of 2025-10-31)
 
 ### ✅ Completed Features
-- **T001-T003: Discovery & Architecture**: Monorepo setup with pnpm, TypeScript configuration, architecture (Next.js + Express + PostgreSQL + Prisma)
-- **T010-T012: Boilerplate & Core Setup**: Express API server, PostgreSQL database, Prisma ORM, JWT authentication, Zod validation
-- **T020-T023: Domain Models & API**: All models implemented (Services, Cases, Reviews, ContactRequests, Banners, Settings), Full CRUD API with OpenAPI documentation
-- **T030-T032: Public Website Core**: Animated hero section, services carousel, advantages, client logos, CasesExplorer with filters and search
-- **T033: Reviews Section**: Full reviews page with filtering/pagination, video review cards with YouTube/Vimeo embedding
-- **T034: About & Contact Pages**: About page with Framer Motion animations, Contact page with Google Maps, form with reCAPTCHA v3
-- **T035: SEO Implementation**: Meta tags, OG tags, sitemap.xml, robots.txt, lazy loading
-- **T040-T043: Admin Panel**: Full admin interface with authentication, CRUD for all entities, media management, Framer Motion animations
-- **T050-T052: Integrations**: Bitrix24 lead creation, email notifications (NodeMailer), Google Analytics, user behavior tracking
-- **T053: Caching & Performance**: Advanced Redis caching with intelligent invalidation, API response caching middleware
-- **T060: Testing Infrastructure**: Vitest for unit tests, Playwright for E2E testing, test utilities, API tests, smoke tests
-- **T061: CI/CD Pipeline**: Complete GitHub Actions workflow, multi-stage Docker builds, automated testing, security scanning
-- **AI Analytics System**: OpenAI GPT-4 integration, smart insights generation, A/B testing, admin dashboard, Redis caching
+- **T001-T003: Discovery & Architecture**: Monorepo setup with Turborepo, TypeScript configuration, Next.js 14 architecture
+- **T010-T012: Next.js Setup**: Next.js App Router, TypeScript, Tailwind CSS, Framer Motion
+- **T020-T023: API Routes**: Serverless API routes `/api/contact` (Bitrix24), `/api/newsletter` (subscription)
+- **T030-T032: Public Website Core**: Animated hero section with 3D background, services overview, advantages, client logos, cases section with filters
+- **T033: Reviews Section**: Testimonials section with 3D carousel, text and video reviews (YouTube embedding)
+- **T034: About & Contact Pages**: Company info section, contact page with live chat widget and contact form
+- **T035: SEO Implementation**: Meta tags, OG tags, Twitter Cards, JSON-LD structured data, sitemap.xml, robots.txt
+- **T040-T043: Admin Panel**: **DEFERRED** - will be implemented in v2.0
+- **T050-T052: Integrations**: Bitrix24 lead creation via webhook, Google Analytics 4 with event tracking, live chat widget
+- **T053: Performance**: Lazy loading with LazyLoadWrapper, dynamic imports, preconnect optimization, shared bundle 87.6kB
+- **T060: Deployment**: Vercel deployment, production build optimization, successful launch
+- **T061: Enhanced Features**: Advanced search (Cmd+K), newsletter subscription system, accessibility improvements (ARIA, SkipLink)
 
 ### 🔄 In Progress
 - **T062: Documentation**: OpenAPI docs available, README.md complete, pending admin guide and DevOps runbook
@@ -92,9 +93,16 @@ TB Group needs корпоративный сайт, который презен�
 - **Кэширование** API запросов (revalidate: 120)
 - **Оптимизированные bundle** размеры
 
+## Deferred Features (v2.0)
+- **Админ-панель**: Полнофункциональная система управления контентом с CRUD операциями для услуг, кейсов, отзывов
+- **База данных**: Для хранения динамического контента (PostgreSQL/MongoDB)
+- **Авторизация**: JWT-аутентификация для админ-панели
+- **Модерация**: Система модерации пользовательских отзывов
+- **Локальные видео**: Поддержка загрузки и хостинга видео-отзывов
+
 ## Risks
-- Сроки внедрения Bitrix24 API (зависимости от их доступности).
-- Управление видео (встроенный YouTube предпочтителен для уменьшения хостинг-издержек).
-- Требования к бэкапу и безопасности — нужно заранее заложить в архитектуру.
-- **Spec Kit синхронизация**: Codex CLI требует настройки для автоматической синхронизации
+- **Deffered Features**: Админ-панель перенесена на v2.0, что может задержать полнофункциональное управление контентом
+- **Vercel ограничения**: Лимиты на serverless functions при высокой нагрузке
+- **Bitrix24 API**: Зависимость от стабильности внешнего API
+- **Видео-отзывы**: YouTube embedding работает, но локальные файлы требуют S3/cloud storage решения
 
