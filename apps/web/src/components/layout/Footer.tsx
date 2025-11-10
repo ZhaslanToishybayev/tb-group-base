@@ -15,26 +15,26 @@ import {
 export default function Footer() {
   // Navigation links
   const footerLinks = [
-    { href: '#hero', label: 'Home' },
-    { href: '#services', label: 'Services' },
-    { href: '#case-studies', label: 'Case Studies' },
-    { href: '#testimonials', label: 'Testimonials' },
-    { href: '#contact', label: 'Contact' },
+    { href: '#hero', label: 'Главная' },
+    { href: '#services', label: 'Услуги' },
+    { href: '#case-studies', label: 'Кейсы' },
+    { href: '#testimonials', label: 'Отзывы' },
+    { href: '#contact', label: 'Контакты' },
   ];
 
   // Social media links
   const socialLinks = [
-    { href: 'https://github.com', icon: Github, label: 'GitHub' },
-    { href: 'https://twitter.com', icon: Twitter, label: 'Twitter' },
-    { href: 'https://linkedin.com', icon: Linkedin, label: 'LinkedIn' },
-    { href: 'https://instagram.com', icon: Instagram, label: 'Instagram' },
+    { href: 'https://wa.me/77271234567', icon: Twitter, label: 'WhatsApp' },
+    { href: 'https://t.me/tbgroup_kz', icon: Github, label: 'Telegram' },
+    { href: 'https://linkedin.com/company/tbgroup', icon: Linkedin, label: 'LinkedIn' },
+    { href: 'https://instagram.com/tbgroup.kz', icon: Instagram, label: 'Instagram' },
   ];
 
   // Contact info
   const contactInfo = [
-    { icon: Mail, text: 'contact@tbgroup.com' },
-    { icon: Phone, text: '+1 (555) 123-4567' },
-    { icon: MapPin, text: 'San Francisco, CA' },
+    { icon: Mail, text: 'info@tbgroup.kz' },
+    { icon: Phone, text: '+7 (727) 123-45-67' },
+    { icon: MapPin, text: 'г. Алматы, ул. Абая 123' },
   ];
 
   // Smooth scroll to section
@@ -68,7 +68,7 @@ export default function Footer() {
               TB Group
             </h3>
             <p className="text-slate-400 mb-6">
-              Transforming ideas into exceptional digital experiences with cutting-edge technology and innovative design.
+              Официальный партнер Мой Склад и Битрикс24 в Казахстане. Внедряем облачные решения для автоматизации бизнеса под ключ.
             </p>
             <div className="space-y-3">
               {contactInfo.map((item, index) => (
@@ -95,7 +95,7 @@ export default function Footer() {
             transition={{ delay: 0.2, duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <h4 className="text-lg font-semibold text-white mb-4">Navigation</h4>
+            <h4 className="text-lg font-semibold text-white mb-4">Навигация</h4>
             <div className="space-y-3">
               {footerLinks.map((link, index) => (
                 <motion.a
@@ -127,15 +127,15 @@ export default function Footer() {
             transition={{ delay: 0.3, duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <h4 className="text-lg font-semibold text-white mb-4">Services</h4>
+            <h4 className="text-lg font-semibold text-white mb-4">Услуги</h4>
             <div className="space-y-3">
               {[
-                'Web Development',
-                'Mobile Apps',
-                'UI/UX Design',
-                'Cloud Solutions',
-                'AI Integration',
-                'Consulting',
+                'Мой Склад',
+                'Битрикс24',
+                'Корпоративная телефония',
+                'Интеграции',
+                'Обучение',
+                'Поддержка',
               ].map((service, index) => (
                 <motion.div
                   key={service}
@@ -161,7 +161,7 @@ export default function Footer() {
             transition={{ delay: 0.4, duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <h4 className="text-lg font-semibold text-white mb-4">Follow Us</h4>
+            <h4 className="text-lg font-semibold text-white mb-4">Мы в соцсетях</h4>
             <div className="flex flex-wrap gap-4">
               {socialLinks.map((social, index) => (
                 <motion.a
@@ -197,12 +197,12 @@ export default function Footer() {
               viewport={{ once: true }}
             >
               <h5 className="text-sm font-semibold text-white mb-3">
-                Stay Updated
+                Подписка на новости
               </h5>
               <div className="flex gap-2">
                 <input
                   type="email"
-                  placeholder="Your email"
+                  placeholder="Ваш email"
                   className="flex-1 px-4 py-2 bg-slate-800 border border-white/10 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-primary-500 transition-colors duration-300"
                 />
                 <motion.button
@@ -210,7 +210,7 @@ export default function Footer() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  Subscribe
+                  Подписаться
                 </motion.button>
               </div>
             </motion.div>

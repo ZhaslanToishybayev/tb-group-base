@@ -51,7 +51,7 @@ export function CasesSection() {
   ];
 
   return (
-    <section className="py-24 bg-gradient-to-b from-slate-900 to-slate-950" id="cases">
+    <section className="py-24 bg-gradient-to-b from-slate-900 to-slate-950" id="case-studies">
       <div className="mx-auto max-w-7xl px-4">
         {/* Header */}
         <motion.div

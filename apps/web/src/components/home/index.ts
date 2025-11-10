@@ -1,4 +1,3 @@
-export { HeroPromo } from './hero-promo';
 export { ServicesCarousel } from './services-carousel';
 export { AdvantagesSection } from './advantages-section';
 export { ClientLogosMarquee } from './client-logos-marquee';

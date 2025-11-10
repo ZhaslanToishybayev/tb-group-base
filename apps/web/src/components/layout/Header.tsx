@@ -20,11 +20,11 @@ export default function Header() {
 
   // Navigation links
   const navLinks = [
-    { href: '#hero', label: 'Home', id: 'hero' },
-    { href: '#services', label: 'Services', id: 'services' },
-    { href: '#case-studies', label: 'Case Studies', id: 'case-studies' },
-    { href: '#testimonials', label: 'Testimonials', id: 'testimonials' },
-    { href: '#contact', label: 'Contact', id: 'contact' },
+    { href: '#hero', label: 'Главная', id: 'hero' },
+    { href: '#services', label: 'Услуги', id: 'services' },
+    { href: '#case-studies', label: 'Кейсы', id: 'case-studies' },
+    { href: '#testimonials', label: 'Отзывы', id: 'testimonials' },
+    { href: '#contact', label: 'Контакты', id: 'contact' },
   ];
 
   // Toggle mobile menu
@@ -150,7 +150,7 @@ export default function Header() {
               variant="gradient"
               onClick={() => scrollToSection('#contact')}
             >
-              Get Started
+              Получить консультацию
             </Button>
           </div>
 
@@ -215,7 +215,7 @@ export default function Header() {
               {/* Menu Header */}
               <div className="flex items-center justify-between p-6 border-b border-white/10">
                 <span className="text-xl font-bold bg-gradient-to-r from-primary-500 to-neon-cyan bg-clip-text text-transparent">
-                  Menu
+                  Меню
                 </span>
                 <motion.button
                   onClick={toggleMobileMenu}
@@ -274,7 +274,7 @@ export default function Header() {
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.5, duration: 0.4 }}
                 >
-                  Get Started
+                  Получить консультацию
                 </motion.a>
               </nav>
             </motion.div>
