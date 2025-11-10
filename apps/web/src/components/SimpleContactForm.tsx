@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Check, Send, Loader2 } from 'lucide-react';
 
 import { submitContact, type ContactRequestPayload } from '../lib/api';
 import { CaptchaGate } from './CaptchaGate';
+import { trackEvent, GA_EVENTS } from './analytics/GoogleAnalytics';
 
 type SimpleFormData = {
   fullName: string;
@@ -35,6 +36,14 @@ export function SimpleContactForm({
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [error, setError] = useState<string | null>(null);
   const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
+
+  // Track form view on mount
+  useEffect(() => {
+    trackEvent(GA_EVENTS.FORM_START, {
+      form_name: 'simple_contact_form',
+      form_variant: variant,
+    });
+  }, [variant]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -80,7 +89,20 @@ export function SimpleContactForm({
     };
 
     try {
+      trackEvent(GA_EVENTS.FORM_SUBMIT, {
+        form_name: 'simple_contact_form',
+        form_variant: variant,
+        service_interest: defaultServiceInterest || 'not_specified',
+      });
+
       await submitContact(payload);
+
+      trackEvent(GA_EVENTS.FORM_SUCCESS, {
+        form_name: 'simple_contact_form',
+        form_variant: variant,
+        service_interest: defaultServiceInterest || 'not_specified',
+      });
+
       setStatus('success');
       if (onSuccess) onSuccess();
 
@@ -92,7 +114,15 @@ export function SimpleContactForm({
         setRecaptchaToken(null);
       }, 3000);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Не удалось отправить заявку. Попробуйте еще раз.');
+      const errorMessage = err instanceof Error ? err.message : 'Не удалось отправить заявку. Попробуйте еще раз.';
+
+      trackEvent(GA_EVENTS.FORM_ERROR, {
+        form_name: 'simple_contact_form',
+        form_variant: variant,
+        error_message: errorMessage,
+      });
+
+      setError(errorMessage);
       setStatus('error');
     }
   };

@@ -27,7 +27,7 @@ export function LiveChatWidget() {
     setIsOpen(!isOpen);
   };
 
-  const handleSendMessage = (e: React.FormEvent) => {
+  const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputValue.trim()) return;
 
@@ -39,18 +39,75 @@ export function LiveChatWidget() {
     };
 
     setMessages((prev) => [...prev, userMessage]);
+    const currentInput = inputValue;
     setInputValue('');
 
-    // Simulate bot response
-    setTimeout(() => {
-      const botResponse: ChatMessage = {
-        id: messages.length + 2,
-        text: 'Спасибо за ваше сообщение! Наш менеджер свяжется с вами в ближайшее время.',
-        isBot: true,
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, botResponse]);
-    }, 1000);
+    // Send to Bitrix24 as lead
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          fullName: 'Чат посетитель',
+          email: 'Не указан',
+          phone: 'Не указан',
+          company: '',
+          message: currentInput,
+          serviceInterest: 'Консультация через чат',
+          source: 'live_chat',
+        }),
+      });
+
+      if (response.ok) {
+        // Send bot response
+        setTimeout(() => {
+          const botResponse: ChatMessage = {
+            id: messages.length + 2,
+            text: 'Спасибо за ваше сообщение! Наш менеджер свяжется с вами в ближайшее время.',
+            isBot: true,
+            timestamp: new Date(),
+          };
+          setMessages((prev) => [...prev, botResponse]);
+        }, 1000);
+      }
+    } catch (error) {
+      console.error('Error sending chat message:', error);
+    }
+  };
+
+  const handleCallRequest = async () => {
+    const userMessage: ChatMessage = {
+      id: messages.length + 1,
+      text: 'Заказан обратный звонок',
+      isBot: false,
+      timestamp: new Date(),
+    };
+    setMessages((prev) => [...prev, userMessage]);
+
+    try {
+      await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          fullName: 'Чат посетитель',
+          email: 'Не указан',
+          phone: 'Не указан',
+          company: '',
+          serviceInterest: 'Запрос обратного звонка',
+          source: 'live_chat_callback',
+        }),
+      });
+    } catch (error) {
+      console.error('Error requesting callback:', error);
+    }
+  };
+
+  const handleEmailRequest = () => {
+    window.location.href = 'mailto:info@tbgroup.kz?subject=Консультация с сайта';
   };
 
   return (
@@ -125,11 +182,17 @@ export function LiveChatWidget() {
               {/* Quick Actions */}
               <div className="px-4 pb-2">
                 <div className="flex gap-2">
-                  <button className="flex items-center gap-1 rounded-lg bg-white/10 px-3 py-1.5 text-xs text-white hover:bg-white/20 transition-colors">
+                  <button
+                    onClick={handleCallRequest}
+                    className="flex items-center gap-1 rounded-lg bg-white/10 px-3 py-1.5 text-xs text-white hover:bg-white/20 transition-colors"
+                  >
                     <Phone size={12} />
                     <span>Заказать звонок</span>
                   </button>
-                  <button className="flex items-center gap-1 rounded-lg bg-white/10 px-3 py-1.5 text-xs text-white hover:bg-white/20 transition-colors">
+                  <button
+                    onClick={handleEmailRequest}
+                    className="flex items-center gap-1 rounded-lg bg-white/10 px-3 py-1.5 text-xs text-white hover:bg-white/20 transition-colors"
+                  >
                     <Mail size={12} />
                     <span>Написать email</span>
                   </button>

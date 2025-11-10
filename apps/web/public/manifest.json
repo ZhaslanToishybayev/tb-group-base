@@ -1,0 +1,40 @@
+{
+  "name": "TB Group — Облачные решения для бизнеса в Казахстане",
+  "short_name": "TB Group",
+  "description": "Официальный партнер Мой Склад и Битрикс24. Внедрение облачных решений для автоматизации бизнеса под ключ в Казахстане.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "ru",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "32x32",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["business", "productivity"],
+  "shortcuts": [
+    {
+      "name": "Консультация",
+      "short_name": "Консультация",
+      "url": "/?section=contact",
+      "description": "Получить консультацию по облачным решениям"
+    },
+    {
+      "name": "Услуги",
+      "short_name": "Услуги",
+      "url": "/?section=services",
+      "description": "Просмотр услуг компании"
+    }
+  ]
+}

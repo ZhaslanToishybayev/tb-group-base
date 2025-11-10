@@ -3,9 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { Search, Menu, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { ThemeToggle } from '../ui/ThemeToggle';
-import { SearchBar } from '../ui/SearchBar';
+import { Search } from '../ui/Search';
 import { Button } from '../ui/Button';
 import { useUIStore } from '../../store/uiStore';
 
@@ -13,7 +13,6 @@ export default function Header() {
   // State for mobile menu
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
-  const [isSearchVisible, setIsSearchVisible] = useState(false);
 
   // UI Store
   const { theme, setTheme } = useUIStore();
@@ -85,8 +84,9 @@ export default function Header() {
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: 'easeOut' }}
+      role="banner"
     >
-      <nav className="max-w-7xl mx-auto px-6 py-4">
+      <nav className="max-w-7xl mx-auto px-6 py-4" role="navigation" aria-label="Основная навигация">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <motion.div
@@ -130,17 +130,10 @@ export default function Header() {
             ))}
           </div>
 
-          {/* Right Side - Search, Theme, Notifications, CTA */}
+          {/* Right Side - Search, Theme, CTA */}
           <div className="hidden md:flex items-center gap-4">
-            {/* Search Button */}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsSearchVisible(!isSearchVisible)}
-              aria-label="Search"
-            >
-              <Search className="h-5 w-5" />
-            </Button>
+            {/* Search */}
+            <Search />
 
             {/* Theme Toggle */}
             <ThemeToggle theme={theme} onThemeChange={setTheme} />
@@ -169,26 +162,6 @@ export default function Header() {
             )}
           </motion.button>
         </div>
-
-        {/* Search Bar */}
-        <AnimatePresence>
-          {isSearchVisible && (
-            <motion.div
-              className="mt-4"
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-            >
-              <SearchBar
-                onSearch={(query) => {
-                  console.log('Search:', query);
-                  setIsSearchVisible(false);
-                }}
-                placeholder="Поиск по сайту..."
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
       </nav>
 
       {/* Mobile Menu Slide-Out Panel */}

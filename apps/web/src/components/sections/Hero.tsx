@@ -1,11 +1,13 @@
 'use client';
 
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { motion } from 'framer-motion';
-import HeroBackground from '../three/HeroBackground';
 import { useTypewriter } from '../../hooks/useTypewriter';
 import { Button } from '../ui/Button';
 import { AnimatedCounters } from './AnimatedCounters';
+
+// Dynamic import for 3D background - loads only when component is visible
+const HeroBackground = lazy(() => import('../three/HeroBackground'));
 
 export function Hero() {
   const headline = 'Внедряем Мой Склад, Битрикс24 и телефонию для вашего бизнеса';
@@ -30,8 +32,12 @@ export function Hero() {
 
   return (
     <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* 3D Background */}
-      <HeroBackground />
+      {/* 3D Background - loaded dynamically */}
+      <Suspense fallback={
+        <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-slate-900 to-slate-950" />
+      }>
+        <HeroBackground />
+      </Suspense>
 
       {/* Content Container */}
       <div className="relative z-10 max-w-7xl mx-auto px-6 py-32">

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { Suspense, lazy } from 'react';
 
 import {
   AdvantagesSection,
@@ -11,11 +12,7 @@ import {
 import { Hero } from '../../components/sections/Hero';
 import { CompanyInfoSection } from '../../components/sections/CompanyInfoSection';
 import { ServicesOverviewSection } from '../../components/sections/ServicesOverviewSection';
-import { CasesSection } from '../../components/sections/CasesSection';
-import {
-  ServicesSection,
-  TestimonialsSection,
-} from '../../components/sections';
+import { LazyLoadWrapper } from '../../components/ui/LazyLoadWrapper';
 import { BlogPreview } from '../../components/blog/BlogPreview';
 import { NewsletterSubscription } from '../../components/ui/NewsletterSubscription';
 import { StatsGrid } from '../../components/ui/StatsGrid';
@@ -25,6 +22,11 @@ import {
   getSettings,
 } from '../../lib/api';
 import { TrendingUp, Users, Award, Clock } from 'lucide-react';
+
+// Dynamic imports for heavy components
+const CasesSection = lazy(() => import('../../components/sections/CasesSection'));
+const ServicesSection = lazy(() => import('../../components/sections/ServicesSection'));
+const TestimonialsSection = lazy(() => import('../../components/sections/TestimonialsSection'));
 
 export const metadata: Metadata = {
   title: 'TB Group — Облачные решения для бизнеса',
@@ -152,11 +154,25 @@ export default async function HomePage() {
         <Hero />
         <CompanyInfoSection />
         <ServicesOverviewSection />
-        <CasesSection />
+
+        {/* Lazy-loaded sections with IntersectionObserver */}
+        <LazyLoadWrapper
+          fallback={<div className="py-20 bg-slate-900/50 min-h-[400px] animate-pulse" />}
+        >
+          <Suspense fallback={<div className="py-20 bg-slate-900/50 min-h-[400px] animate-pulse" />}>
+            <CasesSection />
+          </Suspense>
+        </LazyLoadWrapper>
 
         <ClientLogosMarquee logos={logos} />
 
-        <ServicesSection services={safeServices} />
+        <LazyLoadWrapper
+          fallback={<div className="py-20 bg-slate-900/30 min-h-[400px] animate-pulse" />}
+        >
+          <Suspense fallback={<div className="py-20 bg-slate-900/30 min-h-[400px] animate-pulse" />}>
+            <ServicesSection services={safeServices} />
+          </Suspense>
+        </LazyLoadWrapper>
 
         {/* Stats Grid Section */}
         <section className="py-20 bg-slate-900/50">
@@ -170,9 +186,19 @@ export default async function HomePage() {
         <ClientLogosMarquee logos={logos} />
 
         {/* Blog Preview Section */}
-        <BlogPreview posts={blogPosts} className="py-20" />
+        <LazyLoadWrapper
+          fallback={<div className="py-20 min-h-[400px] animate-pulse" />}
+        >
+          <BlogPreview posts={blogPosts} className="py-20" />
+        </LazyLoadWrapper>
 
-        <TestimonialsSection />
+        <LazyLoadWrapper
+          fallback={<div className="py-20 bg-slate-900/50 min-h-[400px] animate-pulse" />}
+        >
+          <Suspense fallback={<div className="py-20 bg-slate-900/50 min-h-[400px] animate-pulse" />}>
+            <TestimonialsSection />
+          </Suspense>
+        </LazyLoadWrapper>
 
         {/* Newsletter Subscription Section */}
         <section className="py-20">

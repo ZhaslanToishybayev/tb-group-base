@@ -49,7 +49,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-slate-950 border-t border-white/10 relative overflow-hidden">
+    <footer className="bg-slate-950 border-t border-white/10 relative overflow-hidden" role="contentinfo">
       {/* Animated background gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-slate-950 to-slate-900" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(120,119,198,0.1),transparent_50%)]" />

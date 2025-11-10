@@ -15,19 +15,47 @@ export function NewsletterSubscription({ className, variant = 'default' }: Newsl
   const [email, setEmail] = React.useState('');
   const [status, setStatus] = React.useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [message, setMessage] = React.useState('');
+  const [error, setError] = React.useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim()) return;
 
     setStatus('loading');
+    setMessage('');
+    setError('');
 
-    // Simulate API call
-    setTimeout(() => {
-      setStatus('success');
-      setMessage('Спасибо за подписку! Мы отправим вам лучшие новости.');
-      setEmail('');
-    }, 1500);
+    try {
+      const response = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email.trim(),
+          source: 'newsletter_subscription',
+        }),
+      });
+
+      if (response.ok) {
+        setStatus('success');
+        setMessage('Спасибо за подписку! Мы отправим вам лучшие новости.');
+        setEmail('');
+        // Auto reset after 5 seconds
+        setTimeout(() => {
+          setStatus('idle');
+          setMessage('');
+        }, 5000);
+      } else {
+        const data = await response.json();
+        setStatus('error');
+        setError(data.error || 'Не удалось подписаться. Попробуйте еще раз.');
+      }
+    } catch (error) {
+      setStatus('error');
+      setError('Ошибка подключения. Попробуйте позже.');
+      console.error('Newsletter subscription error:', error);
+    }
   };
 
   if (variant === 'inline') {
@@ -90,6 +118,11 @@ export function NewsletterSubscription({ className, variant = 'default' }: Newsl
           </motion.div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
+            {status === 'error' && error && (
+              <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20">
+                <p className="text-sm text-red-400">{error}</p>
+              </div>
+            )}
             <div className="flex flex-col sm:flex-row gap-3">
               <Input
                 type="email"
