@@ -6,6 +6,7 @@
   "/robots.txt/route": "app/robots.txt/route.js",
   "/sitemap.xml/route": "app/sitemap.xml/route.js",
   "/(site)/cases/page": "app/(site)/cases/page.js",
-  "/(site)/page": "app/(site)/page.js",
-  "/(site)/services/page": "app/(site)/services/page.js"
+  "/api/contact/route": "app/api/contact/route.js",
+  "/(site)/services/page": "app/(site)/services/page.js",
+  "/(site)/page": "app/(site)/page.js"
 }
