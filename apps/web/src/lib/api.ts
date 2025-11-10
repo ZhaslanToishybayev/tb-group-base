@@ -1,11 +1,22 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:4000';
 
+// Use relative URL for same-origin requests (works on Vercel)
+const getApiUrl = (path: string) => {
+  if (typeof window !== 'undefined') {
+    // Client-side: use relative path for same-origin
+    return path.startsWith('/') ? path : `/${path}`;
+  }
+  // Server-side: use full URL
+  return `${API_BASE_URL}${path.startsWith('/') ? path : `/${path}`}`;
+};
+
 // Retry configuration
 const DEFAULT_RETRY_COUNT = 3;
 
 async function apiFetch<T>(path: string, init?: RequestInit, retryCount: number = 0): Promise<T> {
   try {
-    const res = await fetch(`${API_BASE_URL}${path}`, {
+    const url = getApiUrl(path);
+    const res = await fetch(url, {
       next: { revalidate: 120 },
       ...init,
       headers: {
@@ -368,7 +379,7 @@ export async function submitContact(payload: ContactRequestPayload) {
     serviceInterest: payload.serviceInterest || undefined,
   };
 
-  return apiFetch<{ status: string; contactRequestId: string; leadId?: string }>(
+  return apiFetch<{ status: string; contactRequestId: string; leadId?: string; message?: string }>(
     '/api/contact',
     {
       method: 'POST',
