@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 
-import { MultiStepContactForm } from '../../../components/MultiStepContactForm';
+import { SimpleContactForm } from '../../../components/SimpleContactForm';
 import { ContactDetails } from '../../../components/ContactDetails';
 import { ContactMap } from '../../../components/ContactMap';
 import { SocialLinks } from '../../../components/SocialLinks';
@@ -53,7 +53,7 @@ export default function ContactPage() {
           <div>
             <div className="rounded-2xl border border-white/10 bg-slate-900/60 p-8">
               <h2 className="text-2xl font-semibold text-white mb-6">Отправить заявку</h2>
-              <MultiStepContactForm />
+              <SimpleContactForm />
             </div>
           </div>
 
@@ -92,7 +92,7 @@ export default function ContactPage() {
         {/* CTA Section */}
         <div className="mt-12 text-center">
           <p className="text-slate-300 mb-4">
-            Готовы начать数字化转型 вашего бизнеса?
+            Готовы начать цифровую трансформацию вашего бизнеса?
           </p>
           <Link
             href="/services"
