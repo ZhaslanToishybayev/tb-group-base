@@ -18,10 +18,7 @@ import settingsRouter from './modules/settings/settings.router';
 import mediaRouter from './modules/media/media.router';
 import contactRouter from './modules/contact/contact.router';
 import uploadsRouter from './modules/uploads/uploads.router';
-// import analyticsRouter from './modules/analytics/analytics.router';
-// import emailRouter from './modules/email/email.router';
 import cacheRouter from './modules/cache/cache.router';
-// import analyticsAIRouter from './modules/analytics-ai/analytics-ai.router';
 import swaggerUi from 'swagger-ui-express';
 import openApiDocument from './openapi/document';
 
@@ -60,10 +57,7 @@ app.use('/api/settings', settingsRouter);
 app.use('/api/media', mediaRouter);
 app.use('/api/contact', contactRouter);
 app.use('/api/uploads', uploadsRouter);
-// app.use('/api/analytics', analyticsRouter);
-// app.use('/api/email', emailRouter);
 app.use('/api/cache', cacheRouter);
-// app.use('/api/analytics-ai', analyticsAIRouter);
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(openApiDocument));
 
 app.get('/health', async (_req, res) => {

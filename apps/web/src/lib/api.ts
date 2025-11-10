@@ -1,21 +1,38 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:4000';
 
-async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(`${API_BASE_URL}${path}`, {
-    next: { revalidate: 120 },
-    ...init,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(init?.headers ?? {}),
-    },
-  });
+// Retry configuration
+const DEFAULT_RETRY_COUNT = 3;
 
-  if (!res.ok) {
-    throw new Error(`API request failed: ${res.status}`);
+async function apiFetch<T>(path: string, init?: RequestInit, retryCount: number = 0): Promise<T> {
+  try {
+    const res = await fetch(`${API_BASE_URL}${path}`, {
+      next: { revalidate: 120 },
+      ...init,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        ...(init?.headers ?? {}),
+      },
+      // Add timeout
+      signal: AbortSignal.timeout(30000),
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      const errorMessage = errorData.error?.message || errorData.message || `API request failed: ${res.status}`;
+      throw new Error(errorMessage);
+    }
+
+    const json = (await res.json()) as { data: T };
+    return json.data;
+  } catch (error) {
+    // Retry on network errors (but not on 4xx errors)
+    if (retryCount < DEFAULT_RETRY_COUNT && error instanceof TypeError) {
+      await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1)));
+      return apiFetch<T>(path, init, retryCount + 1);
+    }
+    throw error;
   }
-
-  const json = (await res.json()) as { data: T };
-  return json.data;
 }
 
 export async function getServices() {
@@ -327,16 +344,37 @@ export type ContactRequestPayload = {
 };
 
 export async function submitContact(payload: ContactRequestPayload) {
-  const res = await fetch(`${API_BASE_URL}/api/contact`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(text || 'Contact submission failed');
+  // Client-side validation
+  if (!payload.fullName || payload.fullName.trim().length < 2) {
+    throw new Error('Пожалуйста, укажите ваше имя (минимум 2 символа)');
   }
-  return res.json();
+
+  if (!payload.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.email)) {
+    throw new Error('Пожалуйста, укажите корректный email адрес');
+  }
+
+  if (payload.message && payload.message.trim().length < 10) {
+    throw new Error('Сообщение должно содержать минимум 10 символов');
+  }
+
+  // Sanitize payload
+  const sanitizedPayload = {
+    ...payload,
+    fullName: payload.fullName.trim(),
+    email: payload.email.toLowerCase().trim(),
+    phone: payload.phone?.trim() || undefined,
+    company: payload.company?.trim() || undefined,
+    message: payload.message?.trim() || undefined,
+    serviceInterest: payload.serviceInterest || undefined,
+  };
+
+  return apiFetch<{ status: string; contactRequestId: string; leadId?: string }>(
+    '/api/contact',
+    {
+      method: 'POST',
+      body: JSON.stringify(sanitizedPayload),
+    }
+  );
 }
 
 function normalizeCaseMetric(metric: CaseMetricPayload): CaseMetric {

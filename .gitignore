@@ -38,3 +38,4 @@ dist/
 # tasks.json
 # tasks/ 
 .next/
+.vercel

@@ -6,9 +6,7 @@ import { validateBody } from '../../utils/validate';
 import { ApiError } from '../../middleware/error-handler';
 import { logger } from '../../middleware/logger';
 import { sendLeadToBitrix } from '../../integrations/bitrix24';
-import { sendNotificationEmail, sendTemplatedEmail } from '../../integrations/mailer';
 import verifyRecaptcha from '../../integrations/recaptcha';
-import { AnalyticsService } from '../analytics/analytics.service';
 import { contactCreateSchema } from './contact.schemas';
 
 const router = Router();
@@ -75,44 +73,6 @@ router.post(
       logger.warn({ err: error }, 'Bitrix24 lead creation failed');
     }
 
-    try {
-      // Use the new templated email system
-      const emailResult = await sendTemplatedEmail('contact_request', {
-        fullName: payload.fullName,
-        email: payload.email,
-        phone: payload.phone,
-        company: payload.company,
-        serviceInterest: payload.serviceInterest,
-        message: payload.message,
-      }, {}, {
-        contactRequestId: contact.id,
-        type: 'contact_request'
-      });
-      
-      if (!emailResult.success) {
-        logger.warn({ 
-          contactRequestId: contact.id,
-          error: emailResult.error,
-          provider: emailResult.provider 
-        }, 'Failed to send notification email');
-      }
-    } catch (error) {
-      logger.error({ err: error }, 'Failed to send notification email, logged for retry');
-    }
-
-    // Track analytics event
-    try {
-      await AnalyticsService.trackContactForm({
-        formType: 'main_contact',
-        serviceInterest: payload.serviceInterest,
-        source: 'website',
-        sessionId: req.session?.id,
-        userAgent: req.get('user-agent'),
-        ip: req.ip,
-      });
-    } catch (error) {
-      logger.warn({ error }, 'Failed to track analytics event');
-    }
 
     res.status(202).json({
       data: {

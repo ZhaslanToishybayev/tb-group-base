@@ -10,5 +10,5 @@ export { ThemeToggle } from './ThemeToggle';
 export { NewsletterSubscription } from './NewsletterSubscription';
 export { SearchBar } from './SearchBar';
 export { StatsGrid } from './StatsGrid';
-export { NotificationBell, NotificationProvider, useNotifications } from './NotificationCenter';
+export { NotificationCenter, useNotifications } from './NotificationCenter';
 export { PageTransition } from './page-transition';

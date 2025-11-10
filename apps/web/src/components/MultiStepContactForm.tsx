@@ -98,6 +98,13 @@ export function MultiStepContactForm({
     setStatus('loading');
     setError(null);
 
+    // Honeypot field validation
+    if (data.website && data.website.trim() !== '') {
+      setStatus('error');
+      setError('Обнаружена подозрительная активность');
+      return;
+    }
+
     // Get reCAPTCHA token if required
     if (RECAPTCHA_SITE_KEY && !recaptchaToken) {
       const recaptchaTrigger = document.querySelector('[data-testid="recaptcha-trigger"]') as HTMLButtonElement;

@@ -1,38 +1,41 @@
 import pRetry from 'p-retry';
+import { z } from 'zod';
 
 import env from '../config/env';
 import prisma from '../lib/prisma';
 import { logger } from '../middleware/logger';
 
-export type Bitrix24FieldMapping = {
-  title: string;
-  name: string;
-  lastName?: string;
-  email: string;
-  phone?: string;
-  company?: string;
-  message?: string;
-  serviceInterest?: string;
-  source?: string;
-  assignedById?: string;
-  categoryId?: number;
-  statusId?: string;
-  customFields?: Record<string, any>;
-};
+// Validation schemas
+export const bitrix24FieldMappingSchema = z.object({
+  title: z.string().min(3).max(100),
+  name: z.string().min(2).max(50),
+  lastName: z.string().min(2).max(50).optional(),
+  email: z.string().email(),
+  phone: z.string().optional(),
+  company: z.string().max(100).optional(),
+  message: z.string().max(1000).optional(),
+  serviceInterest: z.string().max(100).optional(),
+  source: z.string().max(50).optional(),
+  customFields: z.record(z.any()).optional(),
+});
 
-export type Bitrix24Config = {
-  webhookUrl: string;
-  domain?: string;
-  assignedById?: string;
-  categoryId?: number;
-  statusId?: string;
-  sourceId?: string;
-  currencyId?: string;
-  customFields?: Record<string, string>;
-  enableLogging?: boolean;
-  retryAttempts?: number;
-  retryDelay?: number;
-};
+export type Bitrix24FieldMapping = z.infer<typeof bitrix24FieldMappingSchema>;
+
+const bitrix24ConfigSchema = z.object({
+  webhookUrl: z.string().url(),
+  domain: z.string().optional(),
+  assignedById: z.string().optional(),
+  categoryId: z.number().int().positive().optional(),
+  statusId: z.string().default('NEW'),
+  sourceId: z.string().default('WEB'),
+  currencyId: z.string().default('KZT'),
+  customFields: z.record(z.string()).default({}),
+  enableLogging: z.boolean().default(true),
+  retryAttempts: z.number().int().positive().max(10).default(3),
+  retryDelay: z.number().int().positive().max(10000).default(1000),
+});
+
+export type Bitrix24Config = z.infer<typeof bitrix24ConfigSchema>;
 
 export type Bitrix24Response = {
   result?: {
@@ -52,19 +55,21 @@ export type Bitrix24Response = {
 const BITRIX_ENABLED = Boolean(env.BITRIX24_WEBHOOK_URL) && !env.BITRIX24_USE_STUB;
 
 const getBitrix24Config = (): Bitrix24Config => {
-  return {
-    webhookUrl: env.BITRIX24_WEBHOOK_URL!,
+  const config = bitrix24ConfigSchema.parse({
+    webhookUrl: env.BITRIX24_WEBHOOK_URL,
     domain: env.BITRIX24_DOMAIN,
     assignedById: env.BITRIX24_ASSIGNED_ID,
     categoryId: env.BITRIX24_CATEGORY_ID ? parseInt(env.BITRIX24_CATEGORY_ID) : undefined,
-    statusId: env.BITRIX24_STATUS_ID || 'NEW',
-    sourceId: env.BITRIX24_SOURCE_ID || 'WEB',
-    currencyId: env.BITRIX24_CURRENCY_ID || 'KZT',
+    statusId: env.BITRIX24_STATUS_ID,
+    sourceId: env.BITRIX24_SOURCE_ID,
+    currencyId: env.BITRIX24_CURRENCY_ID,
     customFields: env.BITRIX24_CUSTOM_FIELDS ? JSON.parse(env.BITRIX24_CUSTOM_FIELDS) : {},
-    enableLogging: env.BITRIX24_ENABLE_LOGGING !== 'false',
-    retryAttempts: env.BITRIX24_RETRY_ATTEMPTS ? parseInt(env.BITRIX24_RETRY_ATTEMPTS) : 3,
-    retryDelay: env.BITRIX24_RETRY_DELAY ? parseInt(env.BITRIX24_RETRY_DELAY) : 1000,
-  };
+    enableLogging: env.BITRIX24_ENABLE_LOGGING,
+    retryAttempts: env.BITRIX24_RETRY_ATTEMPTS,
+    retryDelay: env.BITRIX24_RETRY_DELAY,
+  });
+
+  return config;
 };
 
 const prepareLeadPayload = (payload: Bitrix24FieldMapping, config: Bitrix24Config) => {
@@ -126,10 +131,13 @@ const prepareLeadPayload = (payload: Bitrix24FieldMapping, config: Bitrix24Confi
 export type LeadPayload = Bitrix24FieldMapping;
 
 export const sendLeadToBitrix = async (
-  contactRequestId: string, 
-  payload: Bitrix24FieldMapping
+  contactRequestId: string,
+  rawPayload: Bitrix24FieldMapping
 ): Promise<{ leadId?: string | number; success: boolean; error?: string }> => {
+  // Validate payload
+  const payload = bitrix24FieldMappingSchema.parse(rawPayload);
   const config = getBitrix24Config();
+
   const log = await prisma.leadLog.create({
     data: {
       contactRequestId,
@@ -140,6 +148,7 @@ export const sendLeadToBitrix = async (
           categoryId: config.categoryId,
           statusId: config.statusId,
           sourceId: config.sourceId,
+          currencyId: config.currencyId,
         },
       },
     },
@@ -151,12 +160,13 @@ export const sendLeadToBitrix = async (
     }
     await prisma.leadLog.update({
       where: { id: log.id },
-      data: { 
-        status: 'SENT', 
-        response: { 
+      data: {
+        status: 'SENT',
+        response: {
           stub: true,
-          message: 'Bitrix24 integration is in stub mode'
-        } 
+          message: 'Bitrix24 integration is in stub mode',
+          timestamp: new Date().toISOString(),
+        }
       },
     });
     return { leadId: `stub-${log.id}`, success: true };
@@ -168,12 +178,12 @@ export const sendLeadToBitrix = async (
     const response = await pRetry(
       async () => {
         const webhookUrl = `${config.webhookUrl}crm.lead.add.json`;
-        
+
         if (config.enableLogging) {
-          logger.debug({ 
-            webhookUrl, 
-            payload: leadPayload, 
-            logId: log.id 
+          logger.debug({
+            webhookUrl: webhookUrl.replace(/\/\/.*@/, '//***@'), // Mask credentials
+            leadTitle: leadPayload.fields.TITLE,
+            logId: log.id
           }, 'Sending lead to Bitrix24');
         }
 
@@ -182,45 +192,56 @@ export const sendLeadToBitrix = async (
           headers: {
             'Content-Type': 'application/json',
             'User-Agent': 'TB-Group-Website/1.0',
+            'Accept': 'application/json',
           },
           body: JSON.stringify(leadPayload),
+          // Add timeout
+          signal: AbortSignal.timeout(10000), // 10 seconds
         });
 
         const responseText = await res.text();
-        
+
         if (!res.ok) {
-          throw new Error(`Bitrix24 HTTP error: ${res.status} ${res.statusText} - ${responseText}`);
+          throw new Error(`Bitrix24 HTTP ${res.status}: ${res.statusText} - ${responseText.substring(0, 200)}`);
         }
 
         let response: Bitrix24Response;
         try {
           response = JSON.parse(responseText);
         } catch (parseError) {
-          throw new Error(`Invalid JSON response from Bitrix24: ${responseText}`);
+          throw new Error(`Invalid JSON from Bitrix24: ${responseText.substring(0, 100)}`);
         }
 
         if (response.error || response.error_description) {
-          throw new Error(`Bitrix24 API error: ${response.error || response.error_description}`);
+          const errorMsg = response.error_description || response.error;
+          throw new Error(`Bitrix24 API error: ${errorMsg}`);
+        }
+
+        if (!response.result) {
+          throw new Error('No result in Bitrix24 response');
         }
 
         return response;
       },
-      { 
+      {
         retries: config.retryAttempts,
+        minTimeout: config.retryDelay,
+        maxTimeout: config.retryDelay * 2,
         onFailedAttempt: async (error) => {
-          logger.warn({ 
+          logger.warn({
             error: error.message,
             attemptNumber: error.attemptNumber,
             retriesLeft: error.retriesLeft,
             logId: log.id
-          }, 'Bitrix24 API attempt failed');
+          }, 'Bitrix24 API attempt failed, retrying...');
         }
       },
     );
 
-    const leadId = response.result?.ID;
+    const leadId = response.result?.ID || response.result?.id;
     const responseData = {
-      ...response,
+      result: response.result,
+      time: response.time,
       payload: leadPayload,
       timestamp: new Date().toISOString(),
     };
@@ -235,24 +256,26 @@ export const sendLeadToBitrix = async (
     });
 
     if (config.enableLogging) {
-      logger.info({ 
-        leadId, 
+      logger.info({
+        leadId,
+        leadTitle: leadPayload.fields.TITLE,
         responseTime: response.time?.duration,
-        logId: log.id 
+        logId: log.id
       }, 'Successfully sent lead to Bitrix24');
     }
 
     return { leadId, success: true };
-    
+
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    
-    logger.error({ 
-      error: errorMessage, 
-      payload: leadPayload,
-      logId: log.id 
+
+    logger.error({
+      error: errorMessage,
+      contactRequestId,
+      leadTitle: leadPayload.fields.TITLE,
+      logId: log.id
     }, 'Failed to send lead to Bitrix24');
-    
+
     await prisma.leadLog.update({
       where: { id: log.id },
       data: {
@@ -266,9 +289,9 @@ export const sendLeadToBitrix = async (
       },
     });
 
-    return { 
-      success: false, 
-      error: errorMessage 
+    return {
+      success: false,
+      error: `Bitrix24 integration error: ${errorMessage}`
     };
   }
 };

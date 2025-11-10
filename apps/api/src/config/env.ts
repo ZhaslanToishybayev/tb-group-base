@@ -26,12 +26,14 @@ const envSchema = z.object({
     .pipe(z.number().int().positive().default(30)),
   ADMIN_BOOTSTRAP_EMAIL: z.string().email(),
   ADMIN_BOOTSTRAP_PASSWORD: z.string().min(8),
-  BITRIX24_WEBHOOK_URL: z.string().url().optional().or(z.literal('')),
+  BITRIX24_WEBHOOK_URL: z.string()
+    .url()
+    .default('https://tbgroup.bitrix24.kz/rest/18/kjdwaeorinhxto5q/'),
   BITRIX24_USE_STUB: z
     .string()
     .transform((value) => value === 'true')
     .or(z.boolean())
-    .default(true),
+    .default(false),
   BITRIX24_DOMAIN: z.string().optional(),
   BITRIX24_ASSIGNED_ID: z.string().optional(),
   BITRIX24_CATEGORY_ID: z.string().optional(),
@@ -54,44 +56,6 @@ const envSchema = z.object({
     .transform((value) => Number.parseInt(value, 10))
     .or(z.number())
     .default(1000),
-  SMTP_HOST: z.string().optional(),
-  SMTP_PORT: z
-    .string()
-    .transform((value) => Number.parseInt(value, 10))
-    .or(z.number())
-    .optional(),
-  SMTP_SECURE: z
-    .string()
-    .transform((value) => value === 'true')
-    .or(z.boolean())
-    .default(false),
-  SMTP_USER: z.string().optional(),
-  SMTP_PASS: z.string().optional(),
-  SMTP_FROM: z.string().optional(),
-  SMTP_BACKUP_HOST: z.string().optional(),
-  SMTP_BACKUP_PORT: z
-    .string()
-    .transform((value) => Number.parseInt(value, 10))
-    .or(z.number())
-    .optional(),
-  SMTP_BACKUP_SECURE: z
-    .string()
-    .transform((value) => value === 'true')
-    .or(z.boolean())
-    .default(false),
-  SMTP_BACKUP_USER: z.string().optional(),
-  SMTP_BACKUP_PASS: z.string().optional(),
-  SMTP_BACKUP_FROM: z.string().optional(),
-  EMAIL_NOTIFICATIONS_TO: z
-    .string()
-    .transform((value) => value.split(',').map((item) => item.trim()).filter(Boolean))
-    .or(z.array(z.string()))
-    .default([]),
-  EMAIL_USE_STUB: z
-    .string()
-    .transform((value) => value === 'true')
-    .or(z.boolean())
-    .default(true),
   RECAPTCHA_SECRET: z.string().optional(),
   UPLOADS_DIR: z.string().optional(),
   ASSET_BASE_URL: z.string().url().optional(),
@@ -111,9 +75,6 @@ export const env = {
     ? parsed.data.ALLOWED_ORIGINS
     : [parsed.data.ALLOWED_ORIGINS],
   JWT_REFRESH_EXP_DAYS: parsed.data.JWT_REFRESH_EXP_DAYS,
-  EMAIL_NOTIFICATIONS_TO: Array.isArray(parsed.data.EMAIL_NOTIFICATIONS_TO)
-    ? parsed.data.EMAIL_NOTIFICATIONS_TO
-    : [parsed.data.EMAIL_NOTIFICATIONS_TO],
 };
 
 export default env;

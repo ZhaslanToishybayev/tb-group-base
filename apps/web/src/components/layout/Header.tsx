@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { Search, Menu, X } from 'lucide-react';
 import { ThemeToggle } from '../ui/ThemeToggle';
-import { NotificationBell } from '../ui/NotificationCenter';
 import { SearchBar } from '../ui/SearchBar';
 import { Button } from '../ui/Button';
 import { useUIStore } from '../../store/uiStore';
@@ -145,9 +144,6 @@ export default function Header() {
 
             {/* Theme Toggle */}
             <ThemeToggle theme={theme} onThemeChange={setTheme} />
-
-            {/* Notifications */}
-            <NotificationBell />
 
             {/* CTA Button */}
             <Button
