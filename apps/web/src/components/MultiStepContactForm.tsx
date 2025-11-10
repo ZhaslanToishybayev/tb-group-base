@@ -105,8 +105,8 @@ export function MultiStepContactForm({
       return;
     }
 
-    // Get reCAPTCHA token if required
-    if (RECAPTCHA_SITE_KEY && !recaptchaToken) {
+    // Get reCAPTCHA token if reCAPTCHA is enabled
+    if (recaptchaEnabled && !recaptchaToken) {
       const recaptchaTrigger = document.querySelector('[data-testid="recaptcha-trigger"]') as HTMLButtonElement;
       recaptchaTrigger?.click();
       return;
@@ -119,7 +119,7 @@ export function MultiStepContactForm({
       company: data.company?.trim() || undefined,
       message: data.message?.trim() || undefined,
       serviceInterest: data.serviceInterest || defaultServiceInterest,
-      recaptchaToken: recaptchaToken || undefined,
+      recaptchaToken: recaptchaEnabled ? (recaptchaToken || undefined) : undefined,
     };
 
     try {
@@ -136,21 +136,22 @@ export function MultiStepContactForm({
 
   const progress = ((currentStep + 1) / steps.length) * 100;
 
-  // Show reCAPTCHA warning if site key is missing
-  if (!RECAPTCHA_SITE_KEY && typeof window !== 'undefined') {
-    return (
-      <div className="rounded-lg border border-yellow-500/30 bg-yellow-500/10 p-4 mb-4">
-        <p className="text-sm text-yellow-300">
-          ⚠️ reCAPTCHA не настроен. Пожалуйста, добавьте NEXT_PUBLIC_RECAPTCHA_SITE_KEY в .env файл.
-        </p>
-      </div>
-    );
-  }
+  // Show reCAPTCHA warning if site key is missing (but allow form to work)
+  const recaptchaEnabled = Boolean(RECAPTCHA_SITE_KEY);
+  const showRecaptchaWarning = !recaptchaEnabled && typeof window !== 'undefined';
 
   return (
-    <CaptchaGate onToken={setRecaptchaToken}>
-      <FormProvider {...methods}>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <>
+      {showRecaptchaWarning && (
+        <div className="rounded-lg border border-yellow-500/30 bg-yellow-500/10 p-4 mb-4">
+          <p className="text-sm text-yellow-300">
+            ⚠️ reCAPTCHA не настроен. Форма работает без проверки. Для production добавьте NEXT_PUBLIC_RECAPTCHA_SITE_KEY в .env файл.
+          </p>
+        </div>
+      )}
+      <CaptchaGate onToken={setRecaptchaToken}>
+        <FormProvider {...methods}>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Progress Bar */}
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
@@ -457,5 +458,6 @@ export function MultiStepContactForm({
         </form>
       </FormProvider>
     </CaptchaGate>
+    </>
   );
 }
