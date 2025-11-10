@@ -45,7 +45,7 @@ export function MultiStepContactForm({
   hideServiceSelect = false,
 }: MultiStepContactFormProps) {
   const methods = useForm<FormData>({
-    mode: 'onChange',
+    mode: 'onSubmit',
     defaultValues: {
       fullName: '',
       email: '',
@@ -64,6 +64,7 @@ export function MultiStepContactForm({
     watch,
     reset,
     setFocus,
+    getValues,
   } = methods;
 
   const [currentStep, setCurrentStep] = useState(0);
@@ -85,7 +86,7 @@ export function MultiStepContactForm({
   const nextStep = async () => {
     const isStepValid = await validateStep(currentStep);
     if (isStepValid && currentStep < steps.length - 1) {
-      setCurrentStep(currentStep + 1);
+      setCurrentStep((prev) => prev + 1);
       // Auto-focus first field of next step after animation
       setTimeout(() => {
         const firstField = steps[currentStep + 1].fields[0];
@@ -109,9 +110,14 @@ export function MultiStepContactForm({
     }
   };
 
-  // Check if current step is valid (not whole form)
-  const isCurrentStepValid = async () => {
-    return await validateStep(currentStep);
+  // Check if current step has all required fields filled (without validation)
+  const isCurrentStepFilled = () => {
+    const step = steps[currentStep];
+    const values = getValues();
+    return step.fields.every((field) => {
+      const value = values[field as keyof FormData];
+      return value && value.trim().length > 0;
+    });
   };
 
   const onSubmit = async (data: FormData) => {
@@ -431,7 +437,7 @@ export function MultiStepContactForm({
               <button
                 type="button"
                 onClick={nextStep}
-                disabled={status === 'loading'}
+                disabled={status === 'loading' || !isCurrentStepFilled()}
                 className="rounded-lg bg-blue-500 px-6 py-3 text-sm font-semibold text-white hover:bg-blue-400 disabled:cursor-not-allowed disabled:opacity-50 transition-colors"
               >
                 Далее
