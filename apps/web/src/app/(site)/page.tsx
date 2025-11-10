@@ -24,9 +24,9 @@ import {
 import { TrendingUp, Users, Award, Clock } from 'lucide-react';
 
 // Dynamic imports for heavy components
-const CasesSection = lazy(() => import('../../components/sections/CasesSection'));
-const ServicesSection = lazy(() => import('../../components/sections/ServicesSection'));
-const TestimonialsSection = lazy(() => import('../../components/sections/TestimonialsSection'));
+const CasesSection = lazy(() => import('../../components/sections/CasesSection').then(m => ({ default: m.CasesSection })));
+const ServicesSection = lazy(() => import('../../components/sections/ServicesSection').then(m => ({ default: m.ServicesSection })));
+const TestimonialsSection = lazy(() => import('../../components/sections/TestimonialsSection').then(m => ({ default: m.TestimonialsSection })));
 
 export const metadata: Metadata = {
   title: 'TB Group — Облачные решения для бизнеса',
