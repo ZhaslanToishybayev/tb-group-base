@@ -180,10 +180,31 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   return {
     title: `${heroTitle} — TB Group`,
     description,
+    alternates: {
+      languages: {
+        'ru-RU': `/services/${params.slug}`,
+        'en-US': `/en/services/${params.slug}`, // Future English version
+      },
+    },
     openGraph: {
       title: heroTitle,
       description,
-      images: image ? [image] : undefined,
+      type: 'website',
+      url: `https://tb-group.kz/services/${params.slug}`,
+      images: [
+        {
+          url: `/api/og?type=service&title=${encodeURIComponent(heroTitle)}&description=${encodeURIComponent(description)}`,
+          width: 1200,
+          height: 630,
+          alt: heroTitle,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: heroTitle,
+      description,
+      images: [`/api/og?type=service&title=${encodeURIComponent(heroTitle)}&description=${encodeURIComponent(description)}`],
     },
   };
 }

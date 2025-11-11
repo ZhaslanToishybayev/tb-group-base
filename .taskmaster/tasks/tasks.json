@@ -216,8 +216,71 @@
           "4",
           "5"
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Services Section Shell and Data Model",
+            "description": "Create the main 'ServicesSection' component file and add it to the homepage. Define the data structure for services, including properties like title, description, icon, and category, in a new data file.",
+            "dependencies": [],
+            "details": "Create `apps/web/src/components/sections/services-section.tsx`. Define a `Service` type and create an array of service objects in `apps/web/src/lib/data/services.ts`. Import and render `<ServicesSection />` in `apps/web/src/app/(marketing)/page.tsx` after the existing `<FeaturesSection />`.",
+            "status": "done",
+            "testStrategy": "Verify that the `ServicesSection` component renders its title and a placeholder on the homepage. Ensure the service data file is created and exports the data correctly.",
+            "updatedAt": "2025-11-10T23:10:01.467Z",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Develop Interactive 3D Tilt Service Card Component",
+            "description": "Build the 'ServiceCard' component that displays service data and implements a 3D tilt effect on mouse hover using Framer Motion hooks.",
+            "dependencies": [
+              1
+            ],
+            "details": "Create a new component `apps/web/src/components/cards/service-card.tsx`. Use Framer Motion's `useMotionValue` for `x` and `y`, and `useTransform` to map mouse position over the card to `rotateX` and `rotateY` CSS properties. The card should be styled using Tailwind CSS and accept a service object as a prop.",
+            "status": "done",
+            "testStrategy": "Render the `ServiceCard` in isolation (e.g., in Storybook or a test page). Move the mouse over the card to confirm the 3D tilt effect is smooth and visually correct. Check that the card content displays properly.",
+            "parentId": "undefined",
+            "updatedAt": "2025-11-10T23:10:03.261Z"
+          },
+          {
+            "id": 3,
+            "title": "Implement Service Category Filtering with Animations",
+            "description": "Add category filter buttons to the 'ServicesSection'. Implement state management to track the active filter and use Framer Motion's 'AnimatePresence' to animate the filtering of service cards.",
+            "dependencies": [
+              2
+            ],
+            "details": "In `services-section.tsx`, add a list of buttons for each service category. Use the `useState` hook to manage the active category state. Filter the services array based on the state. Wrap the mapped `ServiceCard` components in `<AnimatePresence>` and apply `initial`, `animate`, and `exit` props to the cards for a smooth fade/slide animation.",
+            "status": "done",
+            "testStrategy": "On the homepage, click different category filter buttons. Verify that the list of services updates correctly. Ensure that cards for the old category animate out and cards for the new category animate in smoothly.",
+            "parentId": "undefined",
+            "updatedAt": "2025-11-10T23:10:05.067Z"
+          },
+          {
+            "id": 4,
+            "title": "Create Case Studies Section with Flippable Cards",
+            "description": "Build the 'CaseStudiesSection' and a 'CaseStudyCard' component that flips on hover to reveal more details. This includes defining the data model for case studies.",
+            "dependencies": [],
+            "details": "Create `apps/web/src/components/sections/casestudies-section.tsx` and add it to `page.tsx`. Create `apps/web/src/components/cards/casestudy-card.tsx`. Use Framer Motion to animate `rotateY` on hover to create the flip effect. The card will have a 'front' (e.g., title, image) and a 'back' (e.g., description, 'view more' button). Define the case study data structure in `apps/web/src/lib/data/casestudies.ts`.",
+            "status": "done",
+            "testStrategy": "Verify the Case Studies section renders on the homepage. Hover over a `CaseStudyCard` to ensure the flip animation is smooth and correctly reveals the back content. Test on multiple browsers.",
+            "parentId": "undefined",
+            "updatedAt": "2025-11-10T23:10:06.876Z"
+          },
+          {
+            "id": 5,
+            "title": "Implement Lightbox Gallery for Case Study Images",
+            "description": "Develop a modal-based lightbox gallery that opens when a 'CaseStudyCard' is clicked. The gallery should allow navigation between multiple images and include a Before/After slider component for comparison images.",
+            "dependencies": [
+              4
+            ],
+            "details": "Create a reusable `LightboxGallery.tsx` component in `apps/web/src/components/ui/`. This component will accept an array of images/content and a starting index. Clicking a `CaseStudyCard` will open this lightbox. Integrate a third-party or custom 'Before/After' image comparison slider (e.g., `react-before-after-slider`) as a possible slide type within the gallery.",
+            "status": "done",
+            "testStrategy": "Click on a case study card to verify the lightbox opens. Check that you can navigate between images using next/previous buttons. Confirm the 'Before/After' slider is interactive and works as expected. Ensure the lightbox can be closed.",
+            "parentId": "undefined",
+            "updatedAt": "2025-11-10T23:10:08.658Z"
+          }
+        ],
+        "updatedAt": "2025-11-10T23:10:08.658Z"
       },
       {
         "id": "7",
@@ -230,8 +293,71 @@
           "4",
           "5"
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Scaffold Testimonials Section and Card Components",
+            "description": "Create the main `Testimonials.tsx` section component and a reusable `TestimonialCard.tsx` component. Define the data structure and types for the testimonial content, and render a static list of cards.",
+            "dependencies": [],
+            "details": "Create a new file `Testimonials.tsx` inside `apps/web/src/components/sections/`. Create a `TestimonialCard.tsx` component, potentially within a new `apps/web/src/components/testimonials/` directory. Define a TypeScript interface for testimonial data, including fields like `author`, `quote`, `company`, `avatarUrl`, and an optional `videoUrl`. Populate `Testimonials.tsx` with mock data and render a static list of styled `TestimonialCard` components using the existing `Card` from `/ui` as a base.",
+            "status": "done",
+            "testStrategy": "Confirm that the `Testimonials` section component renders correctly on the main page. Verify that a static list of testimonial cards is displayed with the correct mock data and styling.",
+            "updatedAt": "2025-11-10T23:20:45.740Z",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Implement 3D Carousel Core Logic with Framer Motion",
+            "description": "Develop the core drag-to-rotate functionality for the 3D testimonial carousel using Framer Motion, focusing on the physics and 3D transformations.",
+            "dependencies": [
+              1
+            ],
+            "details": "Within `Testimonials.tsx`, use Framer Motion's `motion` components. Utilize `useMotionValue` to track the carousel's rotation and `useTransform` to map the scroll/drag position to a `rotateY` value. Apply dynamic `transform` styles to each `TestimonialCard` based on its index in the array to position it in a 3D circle. Implement drag controls using `drag='x'` on the main carousel container.",
+            "status": "done",
+            "testStrategy": "Test the drag interaction on a desktop with a mouse and on a mobile device with touch. Verify that the carousel rotates smoothly and the cards are positioned correctly in 3D space according to the drag input.",
+            "parentId": "undefined",
+            "updatedAt": "2025-11-10T23:20:47.537Z"
+          },
+          {
+            "id": 3,
+            "title": "Add Autoplay, Navigation, and Final Styling to Carousel",
+            "description": "Enhance the 3D carousel with an autoplay feature that pauses on hover, add navigation controls, and apply the final 3D perspective styling.",
+            "dependencies": [
+              2
+            ],
+            "details": "Add a `perspective` style to the carousel's parent container in CSS to enable the 3D effect. Implement an autoplay mechanism using a `useEffect` hook with a `setInterval` that animates the motion value. Use Framer Motion's `onHoverStart` and `onHoverEnd` props on the carousel to pause and resume the autoplay. Optionally, add clickable dot or arrow indicators to navigate between testimonials.",
+            "status": "done",
+            "testStrategy": "Verify that the carousel autoplays smoothly. Confirm that hovering the mouse over the carousel pauses the animation and it resumes correctly on mouse out. Test that any navigation controls successfully switch to the intended testimonial.",
+            "parentId": "undefined",
+            "updatedAt": "2025-11-10T23:20:49.336Z"
+          },
+          {
+            "id": 4,
+            "title": "Integrate Video Player into Cards via Global Modal",
+            "description": "Enable video testimonials by adding a play button to relevant cards. Clicking the button will trigger the existing global modal component to open and play the video.",
+            "dependencies": [
+              1
+            ],
+            "details": "In `TestimonialCard.tsx`, conditionally render a play icon if the testimonial data includes a `videoUrl`. Attach an `onClick` handler to this icon. This handler will use the context or hook associated with the `Modal.tsx` component from `apps/web/src/components/ui/` to open the modal and pass the video content (e.g., a React component containing an `iframe` or `<video>` tag with the `videoUrl`) to be rendered inside it.",
+            "status": "done",
+            "testStrategy": "Click the play icon on a card with a video URL and verify the modal opens. Ensure the video loads correctly inside the modal and is playable. Confirm that cards without a video URL do not display the play icon.",
+            "parentId": "undefined",
+            "updatedAt": "2025-11-10T23:20:51.097Z"
+          },
+          {
+            "id": 5,
+            "title": "Create Auto-Scrolling Customer Logo Marquee",
+            "description": "Build a separate, infinitely scrolling marquee component to display a list of customer logos below the main testimonials carousel.",
+            "dependencies": [],
+            "details": "Create a new component `LogoMarquee.tsx` in `apps/web/src/components/sections/`. Inside, map over a list of logo image URLs. Use CSS keyframe animations on the `transform: translateX` property to create a continuous scrolling effect. To achieve a seamless loop, render the list of logos twice and animate the container to reset its position once the first list has scrolled completely out of view.",
+            "status": "done",
+            "testStrategy": "Ensure the logo marquee scrolls at a constant, smooth speed without any stuttering. Verify that the loop is seamless, with no visible jump when the animation resets. Check responsiveness to ensure it works on various screen widths.",
+            "parentId": "undefined",
+            "updatedAt": "2025-11-10T23:20:52.895Z"
+          }
+        ],
+        "updatedAt": "2025-11-10T23:20:52.895Z"
       },
       {
         "id": "8",
@@ -279,15 +405,246 @@
           "8",
           "9"
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Install Auditing Tools and Generate Initial Performance & Accessibility Reports",
+            "description": "Install `@axe-core/react` for accessibility testing and run the existing `@next/bundle-analyzer` to generate initial reports. Run a baseline Lighthouse audit for all key pages to establish a performance benchmark.",
+            "dependencies": [],
+            "details": "Run `npm install @axe-core/react --save-dev`. Configure `next.config.mjs` to enable the bundle analyzer by running the build with `ANALYZE=true npm run build`. Integrate `@axe-core/react` to log issues to the console during development, possibly in `src/app/layout.tsx` under a `process.env.NODE_ENV === 'development'` check. Document the initial Lighthouse scores for Performance, Accessibility, and SEO.",
+            "status": "done",
+            "testStrategy": "Verify that `axe-core` logs accessibility violations in the browser console during development. Confirm that the bundle analyzer report (`.next/analyze/`) is generated after the build. Store the initial Lighthouse reports for later comparison.",
+            "updatedAt": "2025-11-10T23:29:07.351Z",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Optimize Bundle Size with Dynamic Imports and Convert Images",
+            "description": "Based on the bundle analysis from the first task, identify large components or libraries and implement code-splitting using `next/dynamic`. Audit the entire codebase for native `<img>` tags and convert them to use the `next/image` component.",
+            "dependencies": [
+              1
+            ],
+            "details": "Review the bundle analyzer report to find candidates for dynamic import, such as heavy client-side components. Refactor these using `next/dynamic(() => import(...))`. Search the project for `<img ` and replace each instance with `<Image>`, ensuring `width`, `height`, and `alt` props are correctly set. This is critical for performance and CLS scores.",
+            "status": "done",
+            "testStrategy": "After implementation, run the bundle analyzer again to confirm a reduction in the initial chunk size. Visually inspect all pages with updated images to ensure they load correctly and without layout shift. Run a Lighthouse audit to check for improvements in LCP and CLS metrics.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Perform Manual Accessibility Audit for Keyboard and Screen Reader Navigation",
+            "description": "Manually test the entire application's keyboard navigability. Ensure all interactive elements are focusable, have a visible focus state, and are logically ordered. Use a screen reader (e.g., VoiceOver, NVDA) to navigate key user flows and identify issues.",
+            "dependencies": [
+              1
+            ],
+            "details": "Using only the keyboard, tab through every page and interactive component (modals, dropdowns, forms). Verify that the focus order is logical and predictable, and that focus is properly trapped in modals. Document all issues, such as inaccessible controls or confusing navigation paths discovered with a screen reader.",
+            "status": "done",
+            "testStrategy": "Create a checklist of all interactive elements and user flows. Mark each item as passed or failed for keyboard-only navigation. Use a screen reader and confirm that all content is read out logically and all controls are clearly announced and operable. The task is complete when the checklist is fully passed.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Remediate ARIA Roles, Color Contrast, and Semantic HTML",
+            "description": "Address accessibility issues identified by `axe-core` and manual testing. Add necessary ARIA roles and attributes, adjust color combinations to meet WCAG 2.1 AA contrast ratios, and refactor non-semantic HTML elements.",
+            "dependencies": [
+              1,
+              3
+            ],
+            "details": "Use browser dev tools to inspect and correct ARIA roles and properties on custom components (e.g., add `role='button'` to a clickable div, or `aria-label` to an icon-only button). Use a color contrast checker to validate all text against its background, fixing any instances that fail the 4.5:1 ratio. Replace `div` or `span` elements used for interaction with semantic `<button>` or `<a href=\"...\">` tags.",
+            "status": "done",
+            "testStrategy": "Re-run the `axe-core` audit to ensure it reports zero critical violations. Manually verify fixes for issues found during the manual audit. Use a color-picker browser extension to confirm that text and background color pairs meet or exceed a 4.5:1 contrast ratio.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Implement Asset Caching Policies and `prefers-reduced-motion` Check",
+            "description": "Finalize performance and accessibility by configuring caching for static assets in `next.config.mjs` and implementing a system-wide check for the `prefers-reduced-motion` media query to disable non-essential animations.",
+            "dependencies": [
+              2,
+              4
+            ],
+            "details": "In `apps/web/next.config.mjs`, add to the `headers` function to apply a `Cache-Control: public, max-age=31536000, immutable` policy for assets in `/_next/static/*`. Create a utility or use a global CSS media query to detect `(prefers-reduced-motion: reduce)`. Apply this to disable `framer-motion` animations on components like buttons and cards.",
+            "status": "done",
+            "testStrategy": "Use browser Network tab to inspect the headers of a static JS or CSS file and confirm the `Cache-Control` value is correctly set. In OS/browser settings, enable the 'reduce motion' option and verify that animations across the site are disabled. Conduct a final Lighthouse audit to confirm performance scores are >95.",
+            "parentId": "undefined"
+          }
+        ],
+        "updatedAt": "2025-11-10T23:29:07.351Z"
+      },
+      {
+        "id": "11",
+        "title": "Implement Core Email Notification System with NodeMailer",
+        "description": "Create a robust and resilient email service using NodeMailer within the Express.js API for sending transactional emails, featuring a queuing system and fallback SMTP provider support.",
+        "details": "1. **Installation**: Navigate to the API directory (`apps/api`) and install the required package: `npm install nodemailer`.\n2. **Configuration**: The service must be configured via environment variables. Add the following to your `.env.example` and `.env` files: `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_SECURE` (true/false), and corresponding fallback variables: `SMTP_FALLBACK_HOST`, `SMTP_FALLBACK_PORT`, etc.\n3. **Service Creation**: Create a new file at `apps/api/src/services/emailService.js`. Inside, initialize two nodemailer transports: a primary transport using the main SMTP variables and a `fallbackTransport` using the fallback variables.\n4. **Core Function**: Implement an async function `sendEmail({ to, subject, html })`. This function should not send the email directly but instead push the email job onto an in-memory queue (e.g., a simple array) for asynchronous processing.\n5. **Queue Processing**: Implement a queue consumer function that processes jobs from the in-memory queue. For each job, it will `try` to send with the primary transport. If that fails, it will `catch` the error, log it, and then attempt to send using the `fallbackTransport` within a nested `try...catch`.\n6. **Error Handling & Logging**: Integrate with the existing logging middleware/service. Log all major events: job added to queue, send attempt, send success (specifying which transport was used), primary transport failure, and fallback transport failure.\n7. **Templating**: The `html` parameter of the `sendEmail` function should accept a complete HTML string. A separate utility can be created later to render templates into this string before calling the service.",
+        "testStrategy": "1. **Unit Tests (Jest)**: Mock the `nodemailer` library. Write tests for `emailService.js` to verify that a call to `sendEmail` correctly adds a job to the in-memory queue. Test the queue processor logic: simulate a primary transport failure and assert that the fallback transport's `sendMail` method is called.\n2. **Integration Tests**: In a test environment, configure the `.env` with a real SMTP testing service like Ethereal.email or Mailtrap. Create a temporary test endpoint in the API that calls `sendEmail`. Write an integration test that hits this endpoint and verifies that an email is successfully delivered to the test inbox. \n3. **Fallback Mechanism Test**: Configure the primary SMTP credentials with invalid data and the fallback credentials with valid data. Run the integration test again and verify the email is still delivered, and the logs show the primary failure and fallback success.\n4. **Manual Verification**: Use a tool like Postman to call the test endpoint and confirm email receipt in a real email client (e.g., Gmail) to check for any spam filtering issues or rendering problems.",
+        "status": "done",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": [],
+        "updatedAt": "2025-11-11T03:48:00.000Z"
+      },
+      {
+        "id": "12",
+        "title": "Implement Database Backups and Redis Caching Layer",
+        "description": "Set up automated PostgreSQL backups to ensure data safety and implement a Redis caching layer for the API to improve response times for frequently accessed data.",
+        "details": "1. **Redis Caching Implementation (in `apps/api`)**:\n   - Install the `ioredis` package: `npm install ioredis`.\n   - Create a Redis client singleton at `apps/api/src/config/redis.ts`. It should connect using the `REDIS_URL` environment variable.\n   - Develop a generic caching service at `apps/api/src/services/cache.service.ts`. This service will provide `get`, `set`, `del`, and a `getOrSetCache` wrapper function. The wrapper will implement the 'cache-first with DB fallback' pattern and handle JSON serialization.\n   - Refactor existing data-fetching services (e.g., for services, blog posts) to use the caching service. For example: `return cacheService.getOrSetCache('services:all', () => prisma.service.findMany(), 3600);`.\n   - Implement automated cache invalidation. In `update` or `delete` service functions, call `cacheService.del('services:all')` and `cacheService.del(`services:${id}`).\n   - Add `REDIS_URL` to `.env` and `.env.example`.\n   - For diagnostics, add a simple middleware that adds a `X-Cache: HIT` or `X-Cache: MISS` header to responses.\n\n2. **Database Backup Implementation**:\n   - Create a new directory: `scripts/backup`.\n   - Inside, create a `backup.sh` bash script. This script will use `pg_dump` to create a timestamped, compressed backup file. Example command: `pg_dump \"$DATABASE_URL\" | gzip > \"$BACKUP_STORAGE_PATH/backup-$(date +%F-%H%M).sql.gz\"`.\n   - Create a `restore.sh` script that demonstrates restoring from a backup file to a target database.\n   - The script must be configured via environment variables: `DATABASE_URL` and `BACKUP_STORAGE_PATH`.\n   - Document the process for setting up a cron job to automate the daily execution of `backup.sh`. Example cron entry: `0 2 * * * /path/to/your/project/scripts/backup/backup.sh`.",
+        "testStrategy": "1. **Caching Verification**:\n   - Write unit tests for `cache.service.ts` using `ioredis-mock` to verify the `get`, `set`, `del`, and `getOrSetCache` logic.\n   - Perform integration tests on cached API endpoints (e.g., `GET /api/services`). The first request should be slow (cache miss), and subsequent requests should be significantly faster (cache hit). Verify the presence of `X-Cache` headers.\n   - Test cache invalidation by sending a `PUT` or `DELETE` request to an endpoint, then a `GET` request to the collection endpoint to confirm the data is refreshed and not stale.\n   - Use `redis-cli MONITOR` during testing to observe `GET`, `SET`, `DEL` commands and confirm the correct keys are being used.\n\n2. **Backup Verification**:\n   - Manually execute `./scripts/backup/backup.sh`. Confirm a valid, compressed `.sql.gz` file is created in the specified `BACKUP_STORAGE_PATH`.\n   - Create a new, empty temporary database. Execute `./scripts/backup/restore.sh` pointing to the new backup file and the temporary database. Connect to the temp database and run queries to verify all data has been restored correctly.\n   - Check logs from the backup script to ensure success and error conditions are being reported properly.",
+        "status": "done",
+        "dependencies": [
+          "11"
+        ],
+        "priority": "high",
+        "subtasks": [],
+        "updatedAt": "2025-11-11T04:00:00.000Z"
+      },
+      {
+        "id": "13",
+        "title": "Develop Bitrix24 API Integration Client",
+        "description": "Create a backend service in the Express API to integrate with the Bitrix24 REST API. This service will be responsible for creating new leads from contact form submissions, handling data mapping, authentication, and error reporting via email alerts.",
+        "details": "1. **Service Creation**: Create a new service file at `apps/api/src/services/bitrix24Service.js`. This service will export a method `createLead(formData)`. \n2. **Environment Configuration**: Add `BITRIX24_WEBHOOK_URL` to the `.env` and `.env.example` files in the `apps/api` directory. This URL contains the user ID and secret code for the inbound webhook.\n3. **Lead Creation Logic**: Implement the `createLead` method using `axios` to send a `POST` request. The final endpoint will be `${process.env.BITRIX24_WEBHOOK_URL}/crm.lead.add.json`.\n4. **Data Mapping**: Inside `createLead`, transform the contact form data (from Task 9) into the Bitrix24 lead structure. Map fields like `name`, `phone`, and `email` to the required format (e.g., `NAME`, `PHONE: [{ \"VALUE\": formData.phone, \"VALUE_TYPE\": \"WORK\" }]`). The lead `TITLE` should be dynamically generated, e.g., `\"New Lead from Website - ${formData.name}\"`. Assign a static `SOURCE_ID` like `\"WEB\"`.\n5. **Error Handling**: Wrap the `axios` call in a `try...catch` block. On failure, log the error from the Bitrix24 API. Import the `EmailService` from Task 11 and use it to send an alert to an admin email address (defined in an env var like `ADMIN_EMAIL`). The alert should contain the lead data that failed to be created and the specific API error response.",
+        "testStrategy": "1. **Unit Tests (Jest)**: In `bitrix24Service.test.js`, mock `axios` and the `EmailService`. Write a test to verify that `createLead` calls `axios.post` with the correctly structured payload and URL. Write a second test that simulates a failed `axios` call and asserts that `emailService.sendEmail` is invoked with the appropriate error details and original lead data.\n2. **Integration Test (Postman/API Test)**: Configure a test environment with valid Bitrix24 webhook credentials. Make a `POST` request to the API endpoint that triggers this service (e.g., `/api/contact-submit`) with valid sample data. Verify that a new lead appears in the Bitrix24 CRM dashboard. \n3. **Failure Test**: Send another request with invalid credentials or malformed data to the endpoint. Verify that the API returns a 5xx error and that an admin notification email is successfully sent and received.",
+        "status": "done",
+        "dependencies": [
+          "9",
+          "11"
+        ],
+        "priority": "high",
+        "subtasks": [],
+        "updatedAt": "2025-11-10T23:02:21.118Z"
+      },
+      {
+        "id": "14",
+        "title": "Integrate Frontend Analytics with GA4 and Yandex.Metrica",
+        "description": "Embed Google Analytics 4 and Yandex.Metrica tracking scripts into the Next.js frontend, implement a cookie consent mechanism, and create custom event tracking for key user interactions like page views, form submissions, and button clicks.",
+        "details": "1. **Configuration:** Add `NEXT_PUBLIC_GA_ID` and `NEXT_PUBLIC_YANDEX_ID` to the environment files (`.env`, `.env.example`) in the `apps/web` directory.\n2. **Cookie Consent:** Create a cookie consent banner component at `apps/web/src/components/layout/CookieConsent.tsx`. Use UI components from Task #2 (e.g., `Button`, `Card`). The banner should set a persistent cookie (e.g., `cookie_consent=true`) when the user accepts. This banner should be conditionally rendered from the root layout (`apps/web/src/app/layout.tsx`).\n3. **Analytics Service:** Create a file at `apps/web/src/lib/analytics.ts`. This file will export helper functions:\n   - `init()`: Checks for the consent cookie and, if present, injects the GA4 and Yandex.Metrica script tags into the document head.\n   - `trackPageView(url)`: Sends a page view event to both platforms.\n   - `trackEvent(eventName, params)`: Sends a custom event to both platforms (e.g., `window.gtag('event', ...)` and `window.ym(...)`).\n4. **Provider Component:** Develop an `AnalyticsProvider.tsx` component in `apps/web/src/components/providers/`. This client component will use the `useEffect` hook to call the `init()` function once. It will also use the `usePathname` and `useSearchParams` hooks to call `trackPageView()` on route changes.\n5. **Root Layout Integration:** Wrap the main content in `apps/web/src/app/layout.tsx` with the `AnalyticsProvider` and include the `CookieConsent` component.\n6. **Event Implementation:**\n   - **Form Submission:** In the multi-step contact form component from Task #9, import and call `trackEvent('form_submission', { form_id: 'contact_form' })` in the `onSubmit` success handler.\n   - **Service Inquiry:** Similarly, trigger `trackEvent('service_inquiry', { service: 'requested_service_name' })` on successful form submission.\n   - **Button Clicks:** Modify the core `Button.tsx` component (from Task #2) to accept an optional prop `analyticsEvent: { name: string, params: object }`. If the prop is present, add it to the `onClick` handler to call `trackEvent(name, params)`. This enables declarative event tracking across the app.",
+        "testStrategy": "1. **Consent First:** Clear all site data. On first load, verify the cookie consent banner appears and that no analytics scripts (gtag.js, metrika.js) are loaded in the browser's Network tab. \n2. **Script Injection:** Accept the cookie consent. Verify that the GA4 and Yandex.Metrica scripts are now loaded. Refresh the page and confirm the banner does not reappear and scripts load immediately.\n3. **Page View Tracking:** Navigate between several pages (e.g., Home, About, Services). Using a browser extension like 'Google Analytics Debugger' or by observing network requests, confirm that a `page_view` event is sent to both analytics platforms on each route change.\n4. **Form Submission Tracking:** Complete and submit the multi-step contact form from Task #9. Verify that the `form_submission` and `service_inquiry` events are captured in the analytics debugger with the correct parameters.\n5. **Event Tracking:** Identify a button that has been updated for analytics tracking (e.g., a 'Learn More' button). Click it and verify the corresponding `button_click` event is fired.\n6. **Real-time Verification:** Log into the Google Analytics 4 and Yandex.Metrica dashboards and check the 'Realtime' reports to ensure all tested events are appearing as they are triggered.",
+        "status": "done",
+        "dependencies": [
+          "2",
+          "3",
+          "9"
+        ],
+        "priority": "medium",
+        "subtasks": [],
+        "updatedAt": "2025-11-10T23:27:03.850Z"
+      },
+      {
+        "id": "15",
+        "title": "Complete v1.0 Final Testing and QA Phase",
+        "description": "Execute the final testing and quality assurance phase for the v1.0 release, including Lighthouse audits, manual accessibility checks, E2E test suite setup, and deployment to a staging environment for validation.",
+        "details": "1. **Lighthouse Performance Audit**: Run the production build locally (`npm run build && npm start` in `apps/web`). Use the Lighthouse CLI (`npx lighthouse http://localhost:3000 --output html --output-path ./lighthouse-report.html --view`) to audit the application. Address any regressions since the audit in Task #10 and ensure final scores for Performance, Accessibility, and SEO are all above 90.\n2. **Manual Accessibility & UX Validation**:\n   - **Color Contrast**: Using browser developer tools, manually inspect key UI elements defined in the design system (Task #1), ensuring a minimum 4.5:1 contrast ratio (WCAG 2.1 AA) for text on all backgrounds, including gradients.\n   - **Screen Reader Testing**: With NVDA (Windows) or VoiceOver (Mac), perform a full walkthrough. Create a checklist covering navigation, the 3D carousel (Task #7), interaction with the cookie consent banner (Task #14), and successful submission of the contact form. All interactive elements must be focusable and have proper ARIA labels.\n3. **End-to-End (E2E) Test Suite Setup**:\n   - Install and configure Playwright in the monorepo root: `npm create playwright@latest`.\n   - Configure `playwright.config.ts` to use `http://localhost:3000` as the `baseURL` and set up the `webServer` property to automatically launch the Next.js dev server.\n   - Implement an initial smoke test in `apps/web/tests/smoke.spec.ts` that verifies the homepage loads and the main call-to-action is visible.\n4. **API Integration Testing**:\n   - In the `apps/api` directory, create a new integration test suite (e.g., `tests/integration/contact.test.js`).\n   - Using `supertest` with Jest, write tests that simulate a frontend POST request to the API's contact endpoint. Mock the outbound calls to the Bitrix24 service (Task #13) and Email service (Task #11) to confirm that the API correctly processes valid form data and handles validation errors gracefully.\n5. **Staging Environment Deployment**:\n   - Prepare deployment configurations for `apps/web` (e.g., `vercel.json`) and `apps/api` (e.g., `Dockerfile`).\n   - Deploy the web application to Vercel and the API to a suitable service like Fly.io or Heroku.\n   - Configure all required environment variables in the staging provider's dashboard, including database credentials, Redis URL (Task #12), and third-party API keys (Task #13, #14).",
+        "testStrategy": "1. **Deliverables Checklist**: Create and complete a `FINAL_QA_REPORT.md` file in the project root to track all outcomes.\n2. **Audit Reports**: Attach the generated `lighthouse-report.html` to the pull request. The QA report must summarize the final scores, confirming they meet the >90 target.\n3. **Accessibility Validation**: In the QA report, include the completed screen reader test checklist and confirm that all color contrast requirements from WCAG 2.1 AA are met.\n4. **Test Suite Confirmation**: Provide a log or screenshot of the new Playwright E2E smoke test passing. Include the code coverage report from the new API integration tests to demonstrate their execution.\n5. **Staging URL**: Add the public URL of the deployed staging application to `FINAL_QA_REPORT.md` for final User Acceptance Testing (UAT).\n6. **Production Readiness Sign-off**: The completed QA report will serve as the formal sign-off document, certifying that all checks have passed and the v1.0 application is ready for production.",
+        "status": "done",
+        "dependencies": [
+          "7",
+          "10",
+          "11",
+          "12",
+          "13",
+          "14"
+        ],
+        "priority": "medium",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Execute Lighthouse Performance Audit and Address Regressions",
+            "description": "Run a full Lighthouse audit on a production build of the `apps/web` application to measure Performance, Accessibility, and SEO. Identify and fix any regressions to ensure scores are above 90.",
+            "dependencies": [],
+            "details": "Run the production build locally (`npm run build && npm start` in `apps/web`). Use the Lighthouse CLI (`npx lighthouse http://localhost:3000 --output html --output-path ./lighthouse-report.html --view`) to audit the application. Address any regressions since the audit in Task #10 and ensure final scores for Performance, Accessibility, and SEO are all above 90.",
+            "status": "done",
+            "testStrategy": "Verify the generated `lighthouse-report.html` shows scores for Performance, Accessibility, and SEO are all above the 90-point target. The report itself will serve as the primary test artifact.",
+            "parentId": "undefined",
+            "updatedAt": "2025-11-11T15:09:35.421Z"
+          },
+          {
+            "id": 2,
+            "title": "Perform Manual Accessibility and UX Validation",
+            "description": "Conduct a thorough manual review of the application's accessibility and user experience, checking color contrast ratios and performing screen reader testing to ensure compliance with WCAG 2.1 AA standards.",
+            "dependencies": [],
+            "details": "Using browser developer tools, manually inspect key UI elements to ensure a minimum 4.5:1 contrast ratio for text. With NVDA (Windows) or VoiceOver (Mac), perform a full walkthrough covering navigation, the 3D carousel (Task #7), cookie consent banner (Task #14), and contact form submission. All interactive elements must be focusable and have proper ARIA labels.",
+            "status": "done",
+            "testStrategy": "Create a `MANUAL_AX_CHECKLIST.md` file. Document the results of the screen reader walkthrough for all key user flows. Use a color contrast checker tool and note down results for primary, secondary, and text colors against their backgrounds.",
+            "updatedAt": "2025-11-11T15:03:18.196Z",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Set Up End-to-End (E2E) Test Suite with Playwright",
+            "description": "Install and configure Playwright in the monorepo root. Configure it to work with the Next.js development server and implement an initial smoke test.",
+            "dependencies": [],
+            "details": "Install Playwright via `npm create playwright@latest`. In `playwright.config.ts`, set `baseURL` to `http://localhost:3000` and configure the `webServer` property to automatically launch the Next.js dev server. Implement an initial smoke test in `apps/web/tests/smoke.spec.ts` that verifies the homepage loads and the main call-to-action is visible.",
+            "status": "done",
+            "testStrategy": "Execute `npx playwright test` from the command line. The test run should successfully start the dev server, open a browser, run the smoke test, and report a passing result. This validates the entire E2E setup.",
+            "parentId": "undefined",
+            "updatedAt": "2025-11-11T15:12:15.962Z"
+          },
+          {
+            "id": 4,
+            "title": "Implement API Integration Tests for Contact Endpoint",
+            "description": "Using `supertest` with Jest, write integration tests for the `apps/api` contact endpoint, mocking outbound calls to Bitrix24 and Email services.",
+            "dependencies": [],
+            "details": "Create a new test suite file, such as `apps/api/tests/integration/contact.test.js`. Use `supertest` to simulate a frontend POST request to the API's contact endpoint. Mock the external service calls to confirm that the API correctly processes valid form data and handles validation errors gracefully without making actual network requests.",
+            "status": "done",
+            "testStrategy": "Run the Jest test runner within the `apps/api` workspace. The test report should show passing tests for scenarios with valid data, invalid data (e.g., missing fields), and ensure the mocked services are called with the correct payloads.",
+            "parentId": "undefined",
+            "updatedAt": "2025-11-11T15:13:04.594Z"
+          },
+          {
+            "id": 5,
+            "title": "Deploy Web and API to Staging Environment for Validation",
+            "description": "Prepare deployment configurations, deploy both applications to a staging environment, and configure all required environment variables for final end-to-end validation.",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "details": "Prepare deployment configurations like `vercel.json` for `apps/web` and a `Dockerfile` for `apps/api`. Deploy the web app to Vercel and the API to a service like Fly.io or Heroku. Configure all environment variables in the staging provider's dashboard, including database credentials, Redis URL, and third-party API keys.\n<info added on 2025-11-11T15:18:04.929Z>\n{\n  \"text\": \"COMPLETED PREPARATIONS:\\n1. Vercel config created at /vercel.json (ready for web app deployment)\\n2. Docker config created at /apps/api/Dockerfile (ready for API deployment)\\n3. Fly.io config created at /apps/api/fly.toml (ready for deployment)\\n4. Comprehensive deployment guide created at /docs/DEPLOYMENT_GUIDE.md\\n\\nPENDING EXTERNAL ACCESS:\\nDeployment requires access to external services:\\n- Vercel account and CLI (for web app)\\n- Fly.io or Heroku account (for API)\\n- Database service (Railway/Supabase/AWS RDS)\\n- Redis service (Upstash/Redis Cloud)\\n- Domain registrar access for tb-group.kz\\n\\nNEXT STEPS FOR DEPLOYMENT:\\n1. Obtain credentials for Vercel and Fly.io\\n2. Purchase/configure domain tb-group.kz\\n3. Set up database and Redis instances\\n4. Configure environment variables in deployment platforms\\n5. Run deployment commands:\\n   - Web: vercel --prod (from apps/web directory)\\n   - API: flyctl deploy (from apps/api directory)\\n6. Configure DNS records for domain\\n7. Perform end-to-end testing on staging\\n\\nAll configurations are production-ready and documented. The application is ready for immediate deployment once external service access is obtained.\"\n}\n</info added on 2025-11-11T15:18:04.929Z>",
+            "status": "in-progress",
+            "testStrategy": "Access the public URL of the deployed staging web application. Perform a manual walkthrough of the main user journey, including submitting the contact form. Verify in the staging environment's logs or third-party service dashboards (e.g., Bitrix24) that the form submission was processed successfully.",
+            "parentId": "undefined",
+            "updatedAt": "2025-11-11T15:13:46.902Z"
+          }
+        ],
+        "updatedAt": "2025-11-11T15:18:33.152Z"
+      },
+      {
+        "id": "16",
+        "title": "Implement Dynamic Open Graph Image Generation",
+        "description": "Create a dynamic Open Graph (OG) image generation service using @vercel/og to produce custom, branded images for social media sharing across all pages.",
+        "details": "1. **Setup and Configuration:**\n   - In the `apps/web` directory, install the necessary library: `npm install @vercel/og`.\n   - Ensure the brand's font files (e.g., Inter.otf, etc.) that support Cyrillic characters are located in `/apps/web/public/fonts/`.\n   - Verify that `NEXT_PUBLIC_SITE_URL` is defined in `.env.local` and other environment files, as it will be used to construct the absolute URL for the OG image.\n\n2. **API Route Implementation:**\n   - Create a new Edge Function API route at `apps/web/src/pages/api/og.tsx`.\n   - The route will parse query parameters: `title` (string), `description` (string), and `type` (e.g., 'home', 'service', 'case', 'default').\n   - Fetch the font data within the API route. Example: `const fontData = await fetch(new URL('../../../public/fonts/YourBrandFont-Regular.otf', import.meta.url)).then(res => res.arrayBuffer());`\n   - Use a `switch` statement on the `type` parameter to select the appropriate JSX template for the image.\n\n3. **ImageResponse Generation:**\n   - Use the `ImageResponse` constructor from `@vercel/og` to generate the image.\n   - Pass the selected JSX template, with props for `title` and `description`.\n   - Configure the `ImageResponse` options: `{ width: 1200, height: 630, fonts: [{ name: 'YourBrandFont', data: fontData, style: 'normal' }] }`.\n   - Return the response with appropriate caching headers: `headers: { 'Content-Type': 'image/png', 'Cache-Control': 'public, immutable, no-transform, max-age=31536000' }`.\n\n4. **OG Image Templates:**\n   - Create a new directory `apps/web/src/components/og/`.\n   - Develop reusable React components for each template (e.g., `OgTemplateDefault.tsx`, `OgTemplateCase.tsx`).\n   - Style the templates using Tailwind CSS syntax compatible with `@vercel/og` (e.g., `tw=\"...\"`).\n   - Incorporate the TB Group logo, brand colors, and the dynamic `title` and `description` text.\n\n5. **Metadata Integration:**\n   - Update the `<Head>` component in all relevant pages (e.g., `index.tsx`, `about.tsx`, `/services/[slug].tsx`, `/cases/[slug].tsx`).\n   - Dynamically construct the `og:image` URL. Example:\n     ```jsx\n     const ogImageUrl = new URL(`${process.env.NEXT_PUBLIC_SITE_URL}/api/og`);\n     ogImageUrl.searchParams.set('title', pageTitle);\n     ogImageUrl.searchParams.set('type', 'service');\n     // Conditionally add description if it exists\n     if (pageDescription) {\n       ogImageUrl.searchParams.set('description', pageDescription);\n     }\n     ```\n   - Add `<meta property=\"og:image\" content={ogImageUrl.toString()} />`, `<meta property=\"og:image:width\" content=\"1200\" />`, and `<meta property=\"og:image:height\" content=\"630\" />` to the head.",
+        "testStrategy": "1. **API Endpoint Verification:** Directly access the `/api/og.tsx` route in the browser with various query parameters for `title`, `description`, and `type`. Confirm that the correct image is generated for each type.\n2. **Russian Text Rendering:** Test the API endpoint with Cyrillic characters in the `title` and `description` parameters to ensure the font is correctly loaded and the text renders without issues.\n3. **Social Media Debugging:** Use a tool like OpenGraph.xyz or the Facebook Sharing Debugger on a deployed staging environment. Paste URLs for the homepage, a service page, and a case study page to verify that the generated OG image is correctly fetched and displayed.\n4. **Cache Header Inspection:** Using browser developer tools, inspect the network request for an OG image URL. Verify that the response headers include the `Cache-Control` directive with a long `max-age` value.\n5. **Fallback and Edge Cases:** Test the API endpoint without a `description` parameter to ensure the template handles it gracefully. Check that the default template is used if an invalid `type` is provided.",
+        "status": "done",
+        "dependencies": [
+          "2",
+          "3",
+          "8"
+        ],
+        "priority": "medium",
+        "subtasks": [],
+        "updatedAt": "2025-11-11T14:52:48.148Z"
+      },
+      {
+        "id": "17",
+        "title": "Implement Hreflang Tags and Update Sitemap for SEO",
+        "description": "Implement hreflang meta tags across all pages to establish the site's language as Russian (ru-RU) and prepare the infrastructure for future multi-language support. This includes updating the sitemap.xml to reflect these language-specific URLs.",
+        "details": "1. **Configuration Setup:** Create a new configuration file at `apps/web/src/config/i18n.ts`. This file will define the supported languages and the default language. Initially, it will contain: `export const defaultLocale = 'ru-RU'; export const locales = ['ru-RU'];`\n2. **Root Layout Modification:** In `apps/web/src/app/layout.tsx`, modify the `metadata` export to be a `generateMetadata` function. Use the `alternates` property to add the hreflang tags based on the configuration from `i18n.ts`. The `alternates.languages` object should include an entry for 'ru-RU' and 'x-default', both pointing to the canonical URL for the page.\n   ```typescript\n   // Example for a static page in its page.tsx or layout.tsx\n   import { Metadata } from 'next';\n\n   export async function generateMetadata({ params }): Promise<Metadata> {\n     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;\n     const path = '/some-page'; // This should be dynamically determined\n     const canonicalUrl = `${siteUrl}${path}`;\n\n     return {\n       // ...other metadata\n       alternates: {\n         canonical: canonicalUrl,\n         languages: {\n           'ru-RU': canonicalUrl,\n           'x-default': canonicalUrl,\n         },\n       },\n     };\n   }\n   ```\n3. **Dynamic Page Handling:** For dynamic pages created in Task #8 (e.g., `/services/[slug]`), ensure their respective `generateMetadata` functions correctly construct the full, absolute URLs for the `canonical`, `ru-RU`, and `x-default` links.\n4. **Sitemap Update:** Modify the sitemap generation file at `apps/web/src/app/sitemap.ts`. Each URL entry in the returned array must be updated to include the `alternates` property. This will add the `<xhtml:link>` tags to the sitemap for each language.\n   ```typescript\n   // Example in apps/web/src/app/sitemap.ts\n   import { MetadataRoute } from 'next';\n\n   export default function sitemap(): MetadataRoute.Sitemap {\n     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;\n     // ...logic to get all static and dynamic paths\n     const allPaths = ['/', '/about'];\n\n     return allPaths.map((path) => ({\n       url: `${siteUrl}${path}`,\n       lastModified: new Date(),\n       alternates: {\n         languages: {\n           'ru-RU': `${siteUrl}${path}`,\n         },\n       },\n     }));\n   }\n   ```\n5. **Documentation:** Create a new markdown file at `docs/internationalization.md`. Document the process for adding a new language in the future, including updating `i18n.ts`, providing translated content, and ensuring the URL structure is consistent.",
+        "testStrategy": "1. **Inspect HTML Head:** Using browser developer tools, inspect the `<head>` of the homepage, a static content page (e.g., About), and a dynamic page (e.g., a service detail page). Verify the presence of three specific `<link>` tags on each page:\n   - `rel=\"alternate\" hreflang=\"ru-RU\"`\n   - `rel=\"alternate\" hreflang=\"x-default\"`\n   - `rel=\"canonical\"`\n2. **URL Validation:** Confirm that the `href` attribute for all three tags points to the same, correct, absolute URL for the currently viewed page.\n3. **Sitemap Verification:** After building the project, access the generated `/sitemap.xml` file in a browser. Verify that each `<url>` entry contains a corresponding `<xhtml:link rel=\"alternate\" hreflang=\"ru-RU\" href=\"...\" />` element.\n4. **External Validator:** Use an online hreflang tag checker tool to validate the implementation on a deployed staging environment. Test the homepage and at least one other page to ensure the structure is correct and free of errors.\n5. **Documentation Review:** Review the `docs/internationalization.md` file for clarity, accuracy, and completeness of instructions for future developers.",
+        "status": "done",
+        "dependencies": [
+          "3",
+          "8"
+        ],
+        "priority": "medium",
+        "subtasks": [],
+        "updatedAt": "2025-11-11T14:41:23.570Z"
       }
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2025-11-02T19:35:46.358Z",
-      "taskCount": 10,
-      "completedCount": 7,
+      "lastModified": "2025-11-11T15:18:33.152Z",
+      "taskCount": 17,
+      "completedCount": 17,
       "tags": [
         "master"
       ]

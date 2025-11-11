@@ -87,6 +87,41 @@ export class CacheService {
     }
   }
 
+  /**
+   * Get-or-set cache pattern (cache-aside)
+   * Checks cache first, if not found, executes the function to get the value,
+   * caches it, and returns it
+   */
+  async getOrSetCache<T>(
+    key: string,
+    fetchFunction: () => Promise<T>,
+    ttl: number = 3600
+  ): Promise<T | null> {
+    // Try to get from cache first
+    const cached = await this.get<T>(key);
+    if (cached !== null) {
+      logger.debug({ key }, 'Cache hit');
+      return cached;
+    }
+
+    // Cache miss, execute function to get fresh data
+    logger.debug({ key }, 'Cache miss, fetching fresh data');
+    try {
+      const data = await fetchFunction();
+
+      if (data !== null && data !== undefined) {
+        // Cache the result for next time
+        await this.set(key, data, ttl);
+        logger.debug({ key }, 'Data cached successfully');
+      }
+
+      return data;
+    } catch (error) {
+      logger.error({ error, key }, 'Error fetching data for cache');
+      return null;
+    }
+  }
+
   async exists(key: string): Promise<boolean> {
     if (!this.isRedisEnabled || !this.redis) {
       return false;

@@ -42,6 +42,8 @@ export function ThemeToggle({ theme = 'system', onThemeChange, className }: Them
         size="icon"
         onClick={() => setIsOpen(!isOpen)}
         aria-label="Toggle theme"
+        aria-haspopup="true"
+        aria-expanded={isOpen}
       >
         {theme === 'light' && <Sun className="h-5 w-5" />}
         {theme === 'dark' && <Moon className="h-5 w-5" />}
@@ -56,12 +58,15 @@ export function ThemeToggle({ theme = 'system', onThemeChange, className }: Them
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setIsOpen(false)}
+            aria-hidden="true"
           />
           <motion.div
             className="absolute right-0 mt-2 w-36 rounded-xl bg-slate-800/95 backdrop-blur-md border border-white/10 shadow-xl z-50 p-2"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
+            role="menu"
+            aria-label="Select theme"
           >
             {themes.map(({ value, icon: Icon, label }) => (
               <button
@@ -75,8 +80,11 @@ export function ThemeToggle({ theme = 'system', onThemeChange, className }: Them
                     ? 'bg-primary-500/20 text-primary-400'
                     : 'text-slate-300 hover:bg-white/5 hover:text-white'
                 }`}
+                role="menuitem"
+                aria-label={`Switch to ${label} theme`}
+                aria-current={theme === value ? 'true' : 'false'}
               >
-                <Icon className="h-4 w-4" />
+                <Icon className="h-4 w-4" aria-hidden="true" />
                 {label}
               </button>
             ))}

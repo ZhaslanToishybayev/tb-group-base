@@ -11,6 +11,33 @@ type CasesPageProps = {
 
 export const metadata = {
   title: 'Кейсы — TB Group',
+  description: 'Кейсы внедрения Мой Склад, Bitrix24 и корпоративной телефонии. Реальные результаты и отзывы клиентов TB Group.',
+  alternates: {
+    languages: {
+      'ru-RU': '/cases',
+      'en-US': '/en/cases', // Future English version
+    },
+  },
+  openGraph: {
+    title: 'Кейсы — TB Group',
+    description: 'Кейсы внедрения Мой Склад, Bitrix24 и корпоративной телефонии. Реальные результаты и отзывы клиентов TB Group.',
+    type: 'website',
+    url: 'https://tb-group.kz/cases',
+    images: [
+      {
+        url: '/api/og?type=case&title=Кейсы TB Group&description=Реальные результаты внедрения облачных решений',
+        width: 1200,
+        height: 630,
+        alt: 'Кейсы TB Group',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Кейсы — TB Group',
+    description: 'Кейсы внедрения Мой Склад, Bitrix24 и корпоративной телефонии. Реальные результаты и отзывы клиентов TB Group.',
+    images: ['/api/og?type=case&title=Кейсы TB Group&description=Реальные результаты внедрения облачных решений'],
+  },
 };
 
 const normalizeCategory = (raw: unknown): ServiceCategoryFilter | null => {

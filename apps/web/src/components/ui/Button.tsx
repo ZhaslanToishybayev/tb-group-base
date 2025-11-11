@@ -71,6 +71,8 @@ export interface ButtonProps
   rightIcon?: LucideIcon;
   leftIconClassName?: string;
   rightIconClassName?: string;
+  analyticsEvent?: string;
+  analyticsParams?: Record<string, any>;
 }
 
 // Ripple effect component
@@ -103,6 +105,8 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       rightIconClassName = '',
       children,
       disabled,
+      analyticsEvent,
+      analyticsParams,
       onAnimationStart,
       onAnimationEnd,
       onAnimationIteration,
@@ -121,6 +125,22 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const [rippleId, setRippleId] = React.useState(0);
 
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+      // Track analytics event before handling click
+      if (analyticsEvent && typeof window !== 'undefined') {
+        // Try to import trackEvent dynamically to avoid SSR issues
+        import('../analytics/GoogleAnalytics')
+          .then(({ trackEvent }) => {
+            trackEvent(analyticsEvent, {
+              ...analyticsParams,
+              button_text: typeof children === 'string' ? children : undefined,
+              timestamp: new Date().toISOString(),
+            });
+          })
+          .catch((err) => {
+            console.warn('Failed to track analytics event:', err);
+          });
+      }
+
       // Don't show ripple if loading or disabled
       if (loading || disabled) return;
 

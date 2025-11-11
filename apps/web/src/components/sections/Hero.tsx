@@ -1,7 +1,7 @@
 'use client';
 
-import React, { Suspense, lazy } from 'react';
-import { motion } from 'framer-motion';
+import React, { Suspense, lazy, useEffect, useState } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { useTypewriter } from '../../hooks/useTypewriter';
 import { Button } from '../ui/Button';
 import { AnimatedCounters } from './AnimatedCounters';
@@ -12,6 +12,19 @@ const HeroBackground = lazy(() => import('../three/HeroBackground'));
 export function Hero() {
   const headline = 'Внедряем Мой Склад, Битрикс24 и телефонию для вашего бизнеса';
   const { displayText, isComplete } = useTypewriter(headline, 80);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  // Check for reduced motion preference
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+      setPrefersReducedMotion(mediaQuery.matches);
+
+      const handleChange = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
+      mediaQuery.addEventListener('change', handleChange);
+      return () => mediaQuery.removeEventListener('change', handleChange);
+    }
+  }, []);
 
   const scrollToSection = (sectionId: string) => {
     const element = document.querySelector(sectionId);
@@ -30,20 +43,36 @@ export function Hero() {
     { value: 99, label: 'Успешность проектов', suffix: '%' },
   ];
 
+  // Parallax transforms based on scroll
+  const { scrollY } = useScroll();
+  const backgroundY = useTransform(scrollY, [0, 1000], [0, -300]);
+  const contentY = useTransform(scrollY, [0, 1000], [0, -150]);
+  const titleY = useTransform(scrollY, [0, 1000], [0, -100]);
+
   return (
     <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* 3D Background - loaded dynamically */}
-      <Suspense fallback={
-        <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-slate-900 to-slate-950" />
-      }>
-        <HeroBackground />
-      </Suspense>
+      {/* Parallax Background Container */}
+      <motion.div
+        style={{ y: prefersReducedMotion ? 0 : backgroundY }}
+        className="absolute inset-0 w-full h-full"
+      >
+        {/* 3D Background - loaded dynamically */}
+        <Suspense fallback={
+          <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-slate-900 to-slate-950" />
+        }>
+          <HeroBackground />
+        </Suspense>
+      </motion.div>
 
-      {/* Content Container */}
-      <div className="relative z-10 max-w-7xl mx-auto px-6 py-32">
+      {/* Content Container with Parallax */}
+      <motion.div
+        style={{ y: prefersReducedMotion ? 0 : contentY }}
+        className="relative z-10 max-w-7xl mx-auto px-6 py-32"
+      >
         <div className="text-center space-y-8">
-          {/* Main Headline */}
+          {/* Main Headline with Independent Parallax */}
           <motion.h1
+            style={{ y: prefersReducedMotion ? 0 : titleY }}
             className="text-5xl md:text-7xl lg:text-8xl font-bold text-white leading-tight"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
@@ -111,7 +140,7 @@ export function Hero() {
             <AnimatedCounters data={stats} className="pt-16" />
           </motion.div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Scroll indicator */}
       <motion.div

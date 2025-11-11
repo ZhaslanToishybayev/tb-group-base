@@ -59,6 +59,54 @@ const envSchema = z.object({
   RECAPTCHA_SECRET: z.string().optional(),
   UPLOADS_DIR: z.string().optional(),
   ASSET_BASE_URL: z.string().url().optional(),
+  // SMTP Configuration
+  SMTP_HOST: z.string().default('smtp.gmail.com'),
+  SMTP_PORT: z
+    .string()
+    .transform((value) => Number(value))
+    .or(z.number())
+    .pipe(z.number().int().positive().max(65535).default(587)),
+  SMTP_USER: z.string().email().optional(),
+  SMTP_PASS: z.string().optional(),
+  SMTP_FROM: z.string().default('TB Group <noreply@tbgroup.kz>'),
+  SMTP_SECURE: z
+    .string()
+    .transform((value) => value === 'true')
+    .or(z.boolean())
+    .default(false),
+  // Fallback SMTP Configuration
+  SMTP_FALLBACK_HOST: z.string().optional(),
+  SMTP_FALLBACK_PORT: z
+    .string()
+    .transform((value) => Number(value))
+    .or(z.number())
+    .optional()
+    .pipe(z.number().int().positive().max(65535).default(587)),
+  SMTP_FALLBACK_USER: z.string().email().optional(),
+  SMTP_FALLBACK_PASS: z.string().optional(),
+  SMTP_FALLBACK_SECURE: z
+    .string()
+    .transform((value) => value === 'true')
+    .or(z.boolean())
+    .default(false),
+  // Email Service Configuration
+  EMAIL_QUEUE_ENABLED: z
+    .string()
+    .transform((value) => value === 'true')
+    .or(z.boolean())
+    .default(true),
+  EMAIL_RETRY_ATTEMPTS: z
+    .string()
+    .transform((value) => Number.parseInt(value, 10))
+    .or(z.number())
+    .pipe(z.number().int().positive().default(3)),
+  EMAIL_RETRY_DELAY: z
+    .string()
+    .transform((value) => Number.parseInt(value, 10))
+    .or(z.number())
+    .default(1000),
+  // Redis Configuration
+  REDIS_URL: z.string().url().optional(),
 });
 
 const parsed = envSchema.safeParse(process.env);

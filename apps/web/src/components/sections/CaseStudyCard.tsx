@@ -23,15 +23,24 @@ interface CaseStudy {
   };
   tags: string[];
   slug: string;
+  gallery?: string[];
 }
 
 interface CaseStudyCardProps {
   caseStudy: CaseStudy;
   index: number;
+  onImageClick?: (imageUrl: string) => void;
 }
 
-export function CaseStudyCard({ caseStudy, index }: CaseStudyCardProps) {
+export function CaseStudyCard({ caseStudy, index, onImageClick }: CaseStudyCardProps) {
   const [isFlipped, setIsFlipped] = useState(false);
+
+  const handleImageClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onImageClick && caseStudy.image) {
+      onImageClick(caseStudy.image);
+    }
+  };
 
   return (
     <motion.div
@@ -52,15 +61,40 @@ export function CaseStudyCard({ caseStudy, index }: CaseStudyCardProps) {
           className="absolute inset-0 rounded-2xl overflow-hidden shadow-2xl"
           style={{ backfaceVisibility: 'hidden' }}
         >
-          <div className="relative h-full w-full">
+          <div
+            className="relative h-full w-full cursor-pointer"
+            onClick={handleImageClick}
+            role="button"
+            tabIndex={0}
+            aria-label={`Открыть галерею для ${caseStudy.title}`}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleImageClick(e as any);
+              }
+            }}
+          >
             <Image
               src={caseStudy.image}
               alt={caseStudy.title}
               fill
-              className="object-cover"
+              className="object-cover transition-transform duration-300 hover:scale-105"
               priority={index < 3}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/50 to-transparent" />
+
+            {/* Gallery Button */}
+            <div className="absolute top-4 right-4">
+              <button
+                onClick={handleImageClick}
+                className="rounded-full bg-black/50 backdrop-blur-sm px-3 py-2 text-xs font-medium text-white transition hover:bg-black/70 flex items-center gap-2"
+              >
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <span>Галерея</span>
+              </button>
+            </div>
 
             {/* Content Overlay */}
             <div className="absolute bottom-0 left-0 right-0 p-6 text-white">

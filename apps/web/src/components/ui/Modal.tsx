@@ -129,18 +129,66 @@ export const Modal: React.FC<ModalProps> = ({
   overlayClassName,
   contentClassName,
 }) => {
-  // Handle escape key
+  // Handle escape key and focus trap
   React.useEffect(() => {
-    if (!closeOnEscape || !open) return;
+    if (!open) return;
+
+    const getFocusableElements = () => {
+      const modal = document.querySelector('[role="dialog"]');
+      if (!modal) return [];
+
+      return Array.from(
+        modal.querySelectorAll(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        )
+      ).filter(
+        (el) => !el.hasAttribute('disabled') && !el.getAttribute('aria-hidden')
+      ) as HTMLElement[];
+    };
 
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
+      if (e.key === 'Escape' && closeOnEscape) {
+        e.preventDefault();
         onOpenChange(false);
       }
     };
 
+    const handleTabKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Tab') return;
+
+      const focusableElements = getFocusableElements();
+      if (focusableElements.length === 0) return;
+
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+
+      if (e.shiftKey) {
+        // Shift + Tab
+        if (document.activeElement === firstElement) {
+          e.preventDefault();
+          lastElement.focus();
+        }
+      } else {
+        // Tab
+        if (document.activeElement === lastElement) {
+          e.preventDefault();
+          firstElement.focus();
+        }
+      }
+    };
+
+    const focusableElements = getFocusableElements();
+    if (focusableElements.length > 0) {
+      focusableElements[0].focus();
+    }
+
     document.addEventListener('keydown', handleEscape);
-    return () => document.removeEventListener('keydown', handleEscape);
+    document.addEventListener('keydown', handleTabKey);
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.removeEventListener('keydown', handleTabKey);
+    };
   }, [open, closeOnEscape, onOpenChange]);
 
   // Prevent body scroll when modal is open
@@ -187,6 +235,10 @@ export const Modal: React.FC<ModalProps> = ({
             animate="visible"
             exit="exit"
             onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={title ? 'modal-title' : undefined}
+            aria-describedby={description ? 'modal-description' : undefined}
           >
             {/* Close button */}
             {showCloseButton && (
@@ -217,6 +269,7 @@ export const Modal: React.FC<ModalProps> = ({
               <div className="mb-6 pr-12">
                 {title && (
                   <motion.h2
+                    id="modal-title"
                     className="text-2xl font-semibold text-white"
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -227,6 +280,7 @@ export const Modal: React.FC<ModalProps> = ({
                 )}
                 {description && (
                   <motion.p
+                    id="modal-description"
                     className="mt-2 text-slate-400"
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}

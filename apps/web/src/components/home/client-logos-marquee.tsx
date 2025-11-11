@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 
 export type ClientLogo = {
@@ -37,7 +38,14 @@ export function ClientLogosMarquee({ logos }: { logos: ClientLogo[] }) {
             {duplicated.map((logo, index) => (
               <div key={`${logo.name}-${index}`} className="flex h-16 w-32 items-center justify-center opacity-80 transition hover:opacity-100">
                 {logo.logoUrl ? (
-                  <img src={logo.logoUrl} alt={logo.name} className="max-h-12 w-auto object-contain" loading="lazy" />
+                  <Image
+                    src={logo.logoUrl}
+                    alt={logo.name}
+                    width={120}
+                    height={48}
+                    className="max-h-12 w-auto object-contain"
+                    loading="lazy"
+                  />
                 ) : (
                   <span className="text-sm font-semibold text-slate-200">{logo.name}</span>
                 )}

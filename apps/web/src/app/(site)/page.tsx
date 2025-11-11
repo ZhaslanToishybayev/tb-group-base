@@ -13,6 +13,7 @@ import { Hero } from '../../components/sections/Hero';
 import { CompanyInfoSection } from '../../components/sections/CompanyInfoSection';
 import { ServicesOverviewSection } from '../../components/sections/ServicesOverviewSection';
 import { LazyLoadWrapper } from '../../components/ui/LazyLoadWrapper';
+import { ErrorBoundary } from '../../components/ui/ErrorBoundary';
 import { BlogPreview } from '../../components/blog/BlogPreview';
 import { NewsletterSubscription } from '../../components/ui/NewsletterSubscription';
 import { StatsGrid } from '../../components/ui/StatsGrid';
@@ -24,13 +25,39 @@ import {
 import { TrendingUp, Users, Award, Clock } from 'lucide-react';
 
 // Dynamic imports for heavy components
-const CasesSection = lazy(() => import('../../components/sections/CasesSection').then(m => ({ default: m.CasesSection })));
-const ServicesSection = lazy(() => import('../../components/sections/ServicesSection').then(m => ({ default: m.ServicesSection })));
-const TestimonialsSection = lazy(() => import('../../components/sections/TestimonialsSection').then(m => ({ default: m.TestimonialsSection })));
+const CaseStudiesSection = lazy(() => import('../../components/sections/CaseStudiesSection'));
+const ServicesSection = lazy(() => import('../../components/sections/ServicesSection'));
+const TestimonialsSection = lazy(() => import('../../components/sections/TestimonialsSection'));
 
 export const metadata: Metadata = {
   title: 'TB Group — Облачные решения для бизнеса',
   description: 'Внедрение Мой Склад, Битрикс24 и корпоративной телефонии под ключ.',
+  alternates: {
+    languages: {
+      'ru-RU': '/',
+      'en-US': '/en', // Future English version
+    },
+  },
+  openGraph: {
+    title: 'TB Group — Облачные решения для бизнеса',
+    description: 'Внедрение Мой Склад, Битрикс24 и корпоративной телефонии под ключ.',
+    type: 'website',
+    url: 'https://tb-group.kz',
+    images: [
+      {
+        url: '/api/og?type=default&title=TB Group — Облачные решения для бизнеса&description=Внедрение Мой Склад, Битрикс24 и корпоративной телефонии под ключ',
+        width: 1200,
+        height: 630,
+        alt: 'TB Group — Облачные решения для бизнеса',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'TB Group — Облачные решения для бизнеса',
+    description: 'Внедрение Мой Склад, Битрикс24 и корпоративной телефонии под ключ.',
+    images: ['/api/og?type=default&title=TB Group — Облачные решения для бизнеса&description=Внедрение Мой Склад, Битрикс24 и корпоративной телефонии под ключ'],
+  },
 };
 
 const defaultAdvantages: Advantage[] = [
@@ -159,9 +186,11 @@ export default async function HomePage() {
         <LazyLoadWrapper
           fallback={<div className="py-20 bg-slate-900/50 min-h-[400px] animate-pulse" />}
         >
-          <Suspense fallback={<div className="py-20 bg-slate-900/50 min-h-[400px] animate-pulse" />}>
-            <CasesSection />
-          </Suspense>
+          <ErrorBoundary>
+            <Suspense fallback={<div className="py-20 bg-slate-900/50 min-h-[400px] animate-pulse" />}>
+              <CaseStudiesSection />
+            </Suspense>
+          </ErrorBoundary>
         </LazyLoadWrapper>
 
         <ClientLogosMarquee logos={logos} />
@@ -169,9 +198,11 @@ export default async function HomePage() {
         <LazyLoadWrapper
           fallback={<div className="py-20 bg-slate-900/30 min-h-[400px] animate-pulse" />}
         >
-          <Suspense fallback={<div className="py-20 bg-slate-900/30 min-h-[400px] animate-pulse" />}>
-            <ServicesSection services={safeServices} />
-          </Suspense>
+          <ErrorBoundary>
+            <Suspense fallback={<div className="py-20 bg-slate-900/30 min-h-[400px] animate-pulse" />}>
+              <ServicesSection services={safeServices} />
+            </Suspense>
+          </ErrorBoundary>
         </LazyLoadWrapper>
 
         {/* Stats Grid Section */}
@@ -183,8 +214,6 @@ export default async function HomePage() {
 
         <AdvantagesSection advantages={advantages} />
 
-        <ClientLogosMarquee logos={logos} />
-
         {/* Blog Preview Section */}
         <LazyLoadWrapper
           fallback={<div className="py-20 min-h-[400px] animate-pulse" />}
@@ -195,9 +224,11 @@ export default async function HomePage() {
         <LazyLoadWrapper
           fallback={<div className="py-20 bg-slate-900/50 min-h-[400px] animate-pulse" />}
         >
-          <Suspense fallback={<div className="py-20 bg-slate-900/50 min-h-[400px] animate-pulse" />}>
-            <TestimonialsSection />
-          </Suspense>
+          <ErrorBoundary>
+            <Suspense fallback={<div className="py-20 bg-slate-900/50 min-h-[400px] animate-pulse" />}>
+              <TestimonialsSection />
+            </Suspense>
+          </ErrorBoundary>
         </LazyLoadWrapper>
 
         {/* Newsletter Subscription Section */}

@@ -4,6 +4,7 @@ import { useState, type FormEvent } from 'react';
 
 import { submitContact, type ContactRequestPayload } from '../lib/api';
 import { CaptchaGate } from './CaptchaGate';
+import { trackEvent, GA_EVENTS } from './analytics/GoogleAnalytics';
 
 type ContactFormProps = {
   defaultServiceInterest?: string;
@@ -62,11 +63,23 @@ function ContactFormInner({ defaultServiceInterest, hideServiceSelect = false }:
     const form = event.currentTarget;
     const formData = new FormData(form);
 
+    // Track form submission attempt
+    trackEvent(GA_EVENTS.FORM_SUBMIT, {
+      form_name: 'contact_form',
+      service_interest: formData.get('serviceInterest')?.toString() || defaultServiceInterest,
+    });
+
     // Validate form
     const errors = validateForm(formData);
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
       setStatus('error');
+
+      // Track validation errors
+      trackEvent(GA_EVENTS.FORM_ERROR, {
+        form_name: 'contact_form',
+        error_fields: Object.keys(errors).join(', '),
+      });
       return;
     }
 
@@ -94,9 +107,21 @@ function ContactFormInner({ defaultServiceInterest, hideServiceSelect = false }:
       form.reset();
       setRecaptchaToken(null);
       setFormErrors({});
+
+      // Track successful form submission
+      trackEvent(GA_EVENTS.FORM_SUCCESS, {
+        form_name: 'contact_form',
+        service_interest: payload.serviceInterest,
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Не удалось отправить заявку');
       setStatus('error');
+
+      // Track form submission error
+      trackEvent(GA_EVENTS.FORM_ERROR, {
+        form_name: 'contact_form',
+        error_message: err instanceof Error ? err.message : 'Unknown error',
+      });
     }
   };
 

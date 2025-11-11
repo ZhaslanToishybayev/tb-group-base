@@ -8,14 +8,65 @@ import { ThemeToggle } from '../ui/ThemeToggle';
 import { Search } from '../ui/Search';
 import { Button } from '../ui/Button';
 import { useUIStore } from '../../store/uiStore';
+import { useLenis } from '../../contexts/LenisContext';
 
 export default function Header() {
+  const { lenis } = useLenis();
   // State for mobile menu
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
 
   // UI Store
   const { theme, setTheme } = useUIStore();
+
+  // Prevent body scroll when menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isMobileMenuOpen]);
+
+  // Handle escape key to close menu
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isMobileMenuOpen) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [isMobileMenuOpen]);
+
+  // Swipe handlers
+  const minSwipeDistance = 50;
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+
+    if (isLeftSwipe) {
+      setIsMobileMenuOpen(false);
+    }
+  };
 
   // Navigation links
   const navLinks = [
@@ -36,10 +87,13 @@ export default function Header() {
     setIsMobileMenuOpen(false);
   };
 
-  // Smooth scroll to section
+  // Smooth scroll to section using Lenis
   const scrollToSection = (href: string) => {
-    const element = document.querySelector(href);
-    if (element) {
+    const element = document.querySelector(href) as HTMLElement | null;
+    if (element && lenis) {
+      lenis.scrollTo(element, { duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+    } else if (element) {
+      // Fallback to standard smooth scroll if Lenis not available
       element.scrollIntoView({
         behavior: 'smooth',
         block: 'start',
@@ -184,6 +238,12 @@ export default function Header() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+              onTouchStart={onTouchStart}
+              onTouchMove={onTouchMove}
+              onTouchEnd={onTouchEnd}
+              role="dialog"
+              aria-modal="true"
+              aria-label="Mobile navigation menu"
             >
               {/* Menu Header */}
               <div className="flex items-center justify-between p-6 border-b border-white/10">
@@ -194,8 +254,9 @@ export default function Header() {
                   onClick={toggleMobileMenu}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="text-white p-2"
+                  className="text-white p-3 rounded-lg hover:bg-white/10 transition-colors"
                   aria-label="Close menu"
+                  type="button"
                 >
                   <svg
                     className="w-6 h-6"
@@ -213,42 +274,49 @@ export default function Header() {
 
               {/* Navigation Links */}
               <nav className="p-6">
-                <div className="space-y-6">
+                <div className="space-y-2">
                   {navLinks.map((link, index) => (
-                    <motion.a
+                    <motion.button
                       key={link.href}
-                      href={link.href}
                       onClick={(e) => {
                         e.preventDefault();
                         scrollToSection(link.href);
                         handleLinkClick();
                       }}
-                      className={`block text-xl transition-colors duration-300 ${
+                      className={`w-full text-left text-xl transition-colors duration-300 py-3 px-4 rounded-lg ${
                         activeSection === link.id
-                          ? 'text-white'
-                          : 'text-slate-300 hover:text-white'
+                          ? 'text-white bg-primary-500/20'
+                          : 'text-slate-300 hover:text-white hover:bg-white/5'
                       }`}
                       initial={{ x: 50, opacity: 0 }}
                       animate={{ x: 0, opacity: 1 }}
                       transition={{ delay: index * 0.1, duration: 0.4 }}
-                      whileHover={{ x: 10 }}
+                      whileTap={{ scale: 0.98 }}
+                      type="button"
+                      aria-label={`Navigate to ${link.label}`}
                     >
                       {link.label}
-                    </motion.a>
+                    </motion.button>
                   ))}
                 </div>
 
                 {/* CTA Button - Mobile */}
-                <motion.a
-                  href="#contact"
-                  onClick={handleLinkClick}
-                  className="mt-8 block w-full text-center px-6 py-3 bg-gradient-to-r from-primary-500 to-neon-cyan text-white font-medium rounded-lg hover:shadow-lg hover:shadow-primary-500/25 transition-all duration-300"
+                <motion.button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    scrollToSection('#contact');
+                    handleLinkClick();
+                  }}
+                  className="mt-8 block w-full text-center px-6 py-4 bg-gradient-to-r from-primary-500 to-neon-cyan text-white font-medium rounded-lg hover:shadow-lg hover:shadow-primary-500/25 transition-all duration-300 active:scale-95"
                   initial={{ y: 50, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.5, duration: 0.4 }}
+                  whileTap={{ scale: 0.95 }}
+                  type="button"
+                  aria-label="Get consultation"
                 >
                   Получить консультацию
-                </motion.a>
+                </motion.button>
               </nav>
             </motion.div>
           </>

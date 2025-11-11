@@ -2,8 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import design system tokens */
+@import '../styles/design-tokens.css';
+
+/* Import optimized fonts from next/font */
+:root {
+  --font-inter: 'Inter', system-ui, sans-serif;
+  --font-jetbrains-mono: 'JetBrains Mono', 'Monaco', 'Consolas', monospace;
+}
+
 body {
   @apply bg-slate-950 text-slate-100 antialiased;
+  font-family: var(--font-inter);
 }
 
 .section {

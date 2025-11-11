@@ -184,3 +184,5 @@ export function CasesSection() {
     </section>
   );
 }
+
+export default CasesSection;

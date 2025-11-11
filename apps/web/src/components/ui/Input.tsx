@@ -38,16 +38,65 @@ const inputVariants = cva(
   }
 );
 
+/**
+ * Props for the Input component
+ */
 export interface InputProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'>,
     VariantProps<typeof inputVariants> {
+  /**
+   * The label text to display above the input field
+   * @example "Email Address"
+   */
   label?: string;
+
+  /**
+   * Error message to display below the input
+   * Shows red styling and error icon
+   * @example "Please enter a valid email"
+   */
   error?: string;
+
+  /**
+   * Success message to display below the input
+   * Shows green styling and success icon
+   * @example "Email is valid"
+   */
   success?: string;
+
+  /**
+   * Warning message to display below the input
+   * Shows yellow styling and warning icon
+   * @example "Email format looks unusual"
+   */
   warning?: string;
+
+  /**
+   * Icon to display on the left side of the input
+   * Must be a valid React node
+   * @example <SearchIcon />
+   */
   leftIcon?: React.ReactNode;
+
+  /**
+   * Icon to display on the right side of the input
+   * Must be a valid React node
+   * @example <ClearIcon />
+   */
   rightIcon?: React.ReactNode;
+
+  /**
+   * Helper text to display below the input
+   * Shows in neutral color without icon
+   * @example "We'll never share your email"
+   */
   helperText?: string;
+
+  /**
+   * Whether the input is required
+   * Shows red asterisk (*) in the label
+   * @default false
+   */
   required?: boolean;
 }
 
@@ -100,7 +149,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
     const labelClassName = cn(
       // Floating label positioning
-      'absolute left-3 transition-all duration-300 pointer-events-none',
+      'absolute left-3 transition-all duration-300 ease-out pointer-events-none',
       // Base label styles
       'text-slate-400',
       // Size-dependent positioning
@@ -139,109 +188,199 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     );
 
     return (
-      <div className="space-y-2">
+      <motion.div
+        className="space-y-2"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+      >
         {/* Label */}
         {label && (
-          <label htmlFor={inputId} className={labelClassName}>
+          <motion.label
+            htmlFor={inputId}
+            className={labelClassName}
+            initial={{ opacity: 0.7 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.2 }}
+          >
             {label}
             {required && <span className="text-error-400 ml-1">*</span>}
-          </label>
+          </motion.label>
         )}
 
-        {/* Input container */}
-        <div className={containerClassName}>
+        {/* Input container with glow effect */}
+        <motion.div
+          className={containerClassName}
+          whileFocus={{ scale: 1.02 }}
+          transition={{ duration: 0.2, ease: 'easeOut' }}
+        >
           {/* Left icon */}
           {leftIcon && (
-            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 pointer-events-none">
+            <motion.div
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 pointer-events-none"
+              animate={{
+                color: isFocused ? '#60a5fa' : '#94a3b8',
+                scale: isFocused ? 1.1 : 1,
+              }}
+              transition={{ duration: 0.2 }}
+            >
               {leftIcon}
-            </div>
+            </motion.div>
           )}
 
           {/* Input field */}
-          <input
-            type={type}
-            id={inputId}
-            ref={ref}
-            className={cn(inputVariants({ variant, size, state: inputState, className }))}
-            onFocus={handleFocus}
-            onBlur={handleBlur}
-            onChange={handleChange}
-            {...props}
+          <motion.div
+            className="relative"
+            whileFocus={{
+              scale: 1.01,
+            }}
+            transition={{ duration: 0.2 }}
+          >
+            <input
+              type={type}
+              id={inputId}
+              ref={ref}
+              className={cn(inputVariants({ variant, size, state: inputState, className }))}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
+              onChange={handleChange}
+              style={{
+                borderColor: displayError
+                  ? '#ef4444'
+                  : displaySuccess
+                  ? '#22c55e'
+                  : displayWarning
+                  ? '#f59e0b'
+                  : isFocused
+                  ? '#3b82f6'
+                  : undefined,
+                boxShadow: isFocused
+                  ? displayError
+                    ? '0 0 0 4px rgba(239, 68, 68, 0.1)'
+                    : displaySuccess
+                    ? '0 0 0 4px rgba(34, 197, 94, 0.1)'
+                    : displayWarning
+                    ? '0 0 0 4px rgba(245, 158, 11, 0.1)'
+                    : '0 0 0 4px rgba(59, 130, 246, 0.1)'
+                  : undefined,
+              }}
+              {...props}
+            />
+          </motion.div>
+
+          {/* Focus glow effect */}
+          <motion.div
+            className="absolute inset-0 rounded-xl pointer-events-none"
+            initial={{ opacity: 0 }}
+            animate={{
+              opacity: isFocused ? 1 : 0,
+            }}
+            transition={{ duration: 0.3 }}
+            style={{
+              background: displayError
+                ? 'radial-gradient(circle, rgba(239, 68, 68, 0.15) 0%, transparent 70%)'
+                : displaySuccess
+                ? 'radial-gradient(circle, rgba(34, 197, 94, 0.15) 0%, transparent 70%)'
+                : displayWarning
+                ? 'radial-gradient(circle, rgba(245, 158, 11, 0.15) 0%, transparent 70%)'
+                : 'radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%)',
+              filter: 'blur(8px)',
+            }}
           />
 
           {/* Right icon or validation indicator */}
           {rightIcon && (
-            <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 pointer-events-none">
+            <motion.div
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 pointer-events-none"
+              animate={{
+                color: isFocused ? '#60a5fa' : '#94a3b8',
+                scale: isFocused ? 1.1 : 1,
+              }}
+              transition={{ duration: 0.2 }}
+            >
               {rightIcon}
-            </div>
+            </motion.div>
           )}
 
           {/* Success/Error/Warning indicator */}
           {!rightIcon && (displaySuccess || displayError || displayWarning) && (
-            <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-              <motion.div
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.2 }}
-              >
-                {displaySuccess && (
-                  <motion.svg
-                    className="w-5 h-5 text-success-400"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </motion.svg>
-                )}
-                {displayError && (
-                  <motion.svg
-                    className="w-5 h-5 text-error-400"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </motion.svg>
-                )}
-                {displayWarning && (
-                  <motion.svg
-                    className="w-5 h-5 text-warning-400"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
-                    />
-                  </motion.svg>
-                )}
-              </motion.div>
-            </div>
+            <motion.div
+              className="absolute right-3 top-1/2 transform -translate-y-1/2"
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{
+                type: 'spring',
+                stiffness: 500,
+                damping: 30,
+                duration: 0.2,
+              }}
+            >
+              {displaySuccess && (
+                <motion.svg
+                  className="w-5 h-5 text-success-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  initial={{ pathLength: 0 }}
+                  animate={{ pathLength: 1 }}
+                  transition={{ duration: 0.4, delay: 0.1 }}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
+                </motion.svg>
+              )}
+              {displayError && (
+                <motion.svg
+                  className="w-5 h-5 text-error-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  initial={{ scale: 0, rotate: -180 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </motion.svg>
+              )}
+              {displayWarning && (
+                <motion.svg
+                  className="w-5 h-5 text-warning-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  initial={{ scale: 0, y: -10 }}
+                  animate={{ scale: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+                  />
+                </motion.svg>
+              )}
+            </motion.div>
           )}
-        </div>
+        </motion.div>
 
         {/* Helper text or error message */}
         {(helperText || displayError || displaySuccess || displayWarning) && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2 }}
+            transition={{ duration: 0.3 }}
             className={cn(
-              'text-sm',
+              'text-sm flex items-center gap-2',
               {
                 'text-slate-400': helperText && !displayError && !displaySuccess && !displayWarning,
                 'text-error-400': displayError,
@@ -250,10 +389,21 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
               }
             )}
           >
-            {displayError || displaySuccess || displayWarning || helperText}
+            {(displayError || displaySuccess || displayWarning) && (
+              <motion.span
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ duration: 0.2, delay: 0.1 }}
+              >
+                {displayError && '⚠️'}
+                {displaySuccess && '✅'}
+                {displayWarning && '⚡'}
+              </motion.span>
+            )}
+            <span>{displayError || displaySuccess || displayWarning || helperText}</span>
           </motion.div>
         )}
-      </div>
+      </motion.div>
     );
   }
 );

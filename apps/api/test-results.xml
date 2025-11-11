@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="5" failures="5" errors="0" time="0.538">
+    <testsuite name="src/test/contact.test.ts" timestamp="2025-11-10T22:46:31.737Z" hostname="zhaslan" tests="1" failures="1" errors="0" skipped="0" time="0">
+        <testcase classname="src/test/contact.test.ts" name="src/test/contact.test.ts" time="0">
+            <failure message="Failed to load url @prisma/client (resolved id: @prisma/client) in /home/zhaslan/Downloads/tb-group-base-current-changes-backup/apps/api/src/test/setup.ts. Does the file exist?" type="Error">
+Error: Failed to load url @prisma/client (resolved id: @prisma/client) in /home/zhaslan/Downloads/tb-group-base-current-changes-backup/apps/api/src/test/setup.ts. Does the file exist?
+ ❯ loadAndTransform ../../node_modules/vitest/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:51969:17
+            </failure>
+        </testcase>
+    </testsuite>
+    <testsuite name="src/test/services.test.ts" timestamp="2025-11-10T22:46:31.739Z" hostname="zhaslan" tests="1" failures="1" errors="0" skipped="0" time="0">
+        <testcase classname="src/test/services.test.ts" name="src/test/services.test.ts" time="0">
+            <failure message="Failed to load url @prisma/client (resolved id: @prisma/client) in /home/zhaslan/Downloads/tb-group-base-current-changes-backup/apps/api/src/test/setup.ts. Does the file exist?" type="Error">
+Error: Failed to load url @prisma/client (resolved id: @prisma/client) in /home/zhaslan/Downloads/tb-group-base-current-changes-backup/apps/api/src/test/setup.ts. Does the file exist?
+ ❯ loadAndTransform ../../node_modules/vitest/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:51969:17
+            </failure>
+        </testcase>
+    </testsuite>
+    <testsuite name="src/utils/async-handler.test.ts" timestamp="2025-11-10T22:46:31.740Z" hostname="zhaslan" tests="1" failures="1" errors="0" skipped="0" time="0">
+        <testcase classname="src/utils/async-handler.test.ts" name="src/utils/async-handler.test.ts" time="0">
+            <failure message="Failed to load url @prisma/client (resolved id: @prisma/client) in /home/zhaslan/Downloads/tb-group-base-current-changes-backup/apps/api/src/test/setup.ts. Does the file exist?" type="Error">
+Error: Failed to load url @prisma/client (resolved id: @prisma/client) in /home/zhaslan/Downloads/tb-group-base-current-changes-backup/apps/api/src/test/setup.ts. Does the file exist?
+ ❯ loadAndTransform ../../node_modules/vitest/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:51969:17
+            </failure>
+        </testcase>
+    </testsuite>
+    <testsuite name="src/utils/validate.test.ts" timestamp="2025-11-10T22:46:31.741Z" hostname="zhaslan" tests="1" failures="1" errors="0" skipped="0" time="0">
+        <testcase classname="src/utils/validate.test.ts" name="src/utils/validate.test.ts" time="0">
+            <failure message="Failed to load url @prisma/client (resolved id: @prisma/client) in /home/zhaslan/Downloads/tb-group-base-current-changes-backup/apps/api/src/test/setup.ts. Does the file exist?" type="Error">
+Error: Failed to load url @prisma/client (resolved id: @prisma/client) in /home/zhaslan/Downloads/tb-group-base-current-changes-backup/apps/api/src/test/setup.ts. Does the file exist?
+ ❯ loadAndTransform ../../node_modules/vitest/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:51969:17
+            </failure>
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/modules/email/email.service.test.ts" timestamp="2025-11-10T22:46:31.742Z" hostname="zhaslan" tests="1" failures="1" errors="0" skipped="0" time="0">
+        <testcase classname="tests/modules/email/email.service.test.ts" name="tests/modules/email/email.service.test.ts" time="0">
+            <failure message="Failed to load url @prisma/client (resolved id: @prisma/client) in /home/zhaslan/Downloads/tb-group-base-current-changes-backup/apps/api/src/test/setup.ts. Does the file exist?" type="Error">
+Error: Failed to load url @prisma/client (resolved id: @prisma/client) in /home/zhaslan/Downloads/tb-group-base-current-changes-backup/apps/api/src/test/setup.ts. Does the file exist?
+ ❯ loadAndTransform ../../node_modules/vitest/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:51969:17
+            </failure>
+        </testcase>
+    </testsuite>
+</testsuites>

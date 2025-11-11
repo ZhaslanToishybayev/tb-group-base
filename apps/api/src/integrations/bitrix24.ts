@@ -363,6 +363,7 @@ export const updateBitrix24Lead = async (
 export const testBitrix24Connection = async (): Promise<{
   success: boolean;
   domain?: string;
+  fields?: any;
   error?: string;
 }> => {
   const config = getBitrix24Config();

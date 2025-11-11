@@ -1,10 +1,12 @@
 {
-  "../../../node_modules/@react-three/drei/core/VideoTexture.js -> hls.js": {
-    "id": null,
-    "files": []
+  "components/sections/Hero.tsx -> ../three/HeroBackground": {
+    "id": "components/sections/Hero.tsx -> ../three/HeroBackground",
+    "files": [
+      "static/chunks/_app-pages-browser_src_components_three_HeroBackground_tsx.js"
+    ]
   },
-  "../../../node_modules/@react-three/drei/web/FaceLandmarker.js -> @mediapipe/tasks-vision": {
-    "id": null,
+  "components/ui/Button.tsx -> ../analytics/GoogleAnalytics": {
+    "id": "components/ui/Button.tsx -> ../analytics/GoogleAnalytics",
     "files": []
   }
 }

@@ -25,7 +25,41 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    // Log error for debugging
     console.error('ErrorBoundary caught an error:', error, errorInfo);
+
+    // Error tracking integration
+    try {
+      // Try to send to Sentry if available
+      if (typeof window !== 'undefined' && (window as any).Sentry) {
+        (window as any).Sentry.captureException(error, {
+          extra: errorInfo,
+          tags: {
+            component: 'ErrorBoundary',
+          },
+        });
+      }
+      // Alternative: Send to custom endpoint
+      else if (process.env.NEXT_PUBLIC_ERROR_TRACKING_URL) {
+        fetch(process.env.NEXT_PUBLIC_ERROR_TRACKING_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            error: error.message,
+            stack: error.stack,
+            componentStack: errorInfo.componentStack,
+            timestamp: new Date().toISOString(),
+            url: window.location.href,
+            userAgent: navigator.userAgent,
+          }),
+        }).catch(() => {
+          // Silently fail - don't spam console
+        });
+      }
+    } catch (trackingError) {
+      // Avoid infinite error loop
+      console.error('Failed to send error to tracking service:', trackingError);
+    }
   }
 
   resetError = () => {
@@ -74,6 +108,24 @@ function DefaultErrorFallback({ error, resetError }: { error?: Error; resetError
           </Button>
           <Button variant="ghost" onClick={() => window.location.reload()}>
             Обновить страницу
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => {
+              // Report issue button
+              const subject = encodeURIComponent('Ошибка на сайте TB Group');
+              const body = encodeURIComponent(
+                `Здравствуйте!\n\n` +
+                `Произошла ошибка на сайте:\n\n` +
+                `${error?.message || 'Неизвестная ошибка'}\n\n` +
+                `URL: ${window.location.href}\n` +
+                `Время: ${new Date().toLocaleString('ru-RU')}\n\n` +
+                `Пожалуйста, приложите скриншот если возможно.`
+              );
+              window.open(`mailto:info@tb-group.kz?subject=${subject}&body=${body}`);
+            }}
+          >
+            Сообщить об ошибке
           </Button>
         </div>
       </div>

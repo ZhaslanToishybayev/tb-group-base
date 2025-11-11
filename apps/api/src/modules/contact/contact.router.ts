@@ -5,7 +5,7 @@ import asyncHandler from '../../utils/async-handler';
 import { validateBody } from '../../utils/validate';
 import { ApiError } from '../../middleware/error-handler';
 import { logger } from '../../middleware/logger';
-import { sendLeadToBitrix } from '../../integrations/bitrix24';
+import { Bitrix24Service } from '../../services/bitrix24Service';
 import verifyRecaptcha from '../../integrations/recaptcha';
 import { contactCreateSchema } from './contact.schemas';
 
@@ -38,47 +38,63 @@ router.post(
     });
 
     let leadId: string | null = null;
+    let bitrix24Error: string | null = null;
 
     try {
-      const leadResult = await sendLeadToBitrix(contact.id, {
-        title: `Website lead: ${payload.fullName}`,
+      // Use Bitrix24Service to create lead with enhanced error handling
+      const leadResult = await Bitrix24Service.createLead({
         name: payload.fullName,
         email: payload.email,
         phone: payload.phone,
         company: payload.company,
         message: payload.message,
-        serviceInterest: payload.serviceInterest ?? null,
+        serviceInterest: payload.serviceInterest ?? undefined,
         source: 'website',
       });
 
-      if (leadResult.success) {
-        leadId = leadResult.leadId ? String(leadResult.leadId) : null;
+      if (leadResult.success && leadResult.leadId) {
+        leadId = String(leadResult.leadId);
         await prisma.contactRequest.update({
           where: { id: contact.id },
-          data: { 
+          data: {
             status: 'IN_PROGRESS',
             metadata: {
               ...contact.metadata,
               bitrix24LeadId: leadId,
+              bitrix24ContactRequestId: leadResult.contactRequestId,
             },
           },
         });
+        logger.info({
+          contactId: contact.id,
+          leadId,
+          bitrix24ContactRequestId: leadResult.contactRequestId
+        }, 'Bitrix24 lead created successfully');
       } else {
-        logger.warn({ 
-          error: leadResult.error,
-          contactId: contact.id 
+        bitrix24Error = leadResult.error || 'Unknown error';
+        logger.warn({
+          contactId: contact.id,
+          error: bitrix24Error,
+          bitrix24ContactRequestId: leadResult.contactRequestId
         }, 'Bitrix24 lead creation failed');
       }
     } catch (error) {
-      logger.warn({ err: error }, 'Bitrix24 lead creation failed');
+      bitrix24Error = error instanceof Error ? error.message : 'Unknown error';
+      logger.error({
+        contactId: contact.id,
+        error: bitrix24Error
+      }, 'Bitrix24 lead creation error');
     }
-
 
     res.status(202).json({
       data: {
         status: 'queued',
         contactRequestId: contact.id,
         leadId,
+        bitrix24: {
+          success: !bitrix24Error,
+          error: bitrix24Error,
+        },
       },
     });
   }),

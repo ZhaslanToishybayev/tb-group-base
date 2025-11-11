@@ -27,7 +27,7 @@ interface CaseStudy {
 }
 
 interface CaseStudiesSectionProps {
-  caseStudies: CaseStudy[];
+  caseStudies?: CaseStudy[];
 }
 
 // Sample data - replace with real API data
@@ -50,6 +50,11 @@ const mockCaseStudies: CaseStudy[] = [
     },
     tags: ['Мой Склад', 'ERP', 'Автоматизация'],
     slug: 'moy-sklad-retail-case',
+    gallery: [
+      '/api/placeholder/1200/800',
+      '/api/placeholder/1200/800',
+      '/api/placeholder/1200/800',
+    ],
   },
   {
     id: '2',
@@ -69,6 +74,11 @@ const mockCaseStudies: CaseStudy[] = [
     },
     tags: ['Битрикс24', 'CRM', 'B2B'],
     slug: 'bitrix24-b2b-case',
+    gallery: [
+      '/api/placeholder/1200/800',
+      '/api/placeholder/1200/800',
+      '/api/placeholder/1200/800',
+    ],
   },
   {
     id: '3',
@@ -88,6 +98,11 @@ const mockCaseStudies: CaseStudy[] = [
     },
     tags: ['Телефония', 'IP', 'Интеграция'],
     slug: 'telephony-integration-case',
+    gallery: [
+      '/api/placeholder/1200/800',
+      '/api/placeholder/1200/800',
+      '/api/placeholder/1200/800',
+    ],
   },
 ];
 
@@ -137,7 +152,12 @@ export function CaseStudiesSection({ caseStudies = mockCaseStudies }: CaseStudie
         {/* Cases Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {caseStudies.map((caseStudy, index) => (
-            <CaseStudyCard key={caseStudy.id} caseStudy={caseStudy} index={index} />
+            <CaseStudyCard
+              key={caseStudy.id}
+              caseStudy={caseStudy}
+              index={index}
+              onImageClick={setSelectedImage}
+            />
           ))}
         </div>
 
@@ -151,6 +171,14 @@ export function CaseStudiesSection({ caseStudies = mockCaseStudies }: CaseStudie
         >
           <motion.a
             href="/cases"
+            onClick={() => {
+              if (typeof window !== 'undefined' && (window as any).gtag) {
+                (window as any).gtag('event', 'cta_click', {
+                  button_text: 'Все кейсы',
+                  section: 'case_studies',
+                });
+              }
+            }}
             className="inline-flex items-center gap-3 px-8 py-4 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 text-white font-semibold hover:from-blue-500 hover:to-blue-400 transition-all shadow-lg shadow-blue-500/25"
             whileHover={{ scale: 1.05, y: -2 }}
             whileTap={{ scale: 0.98 }}

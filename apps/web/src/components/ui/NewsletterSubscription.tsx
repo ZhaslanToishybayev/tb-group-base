@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Mail, ArrowRight, CheckCircle } from 'lucide-react';
+import { Mail, ArrowRight, CheckCircle, X } from 'lucide-react';
 import { Button } from './Button';
 import { Input } from './Input';
 
@@ -16,6 +16,37 @@ export function NewsletterSubscription({ className, variant = 'default' }: Newsl
   const [status, setStatus] = React.useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [message, setMessage] = React.useState('');
   const [error, setError] = React.useState('');
+  const [emailError, setEmailError] = React.useState('');
+
+  // Email validation
+  const validateEmail = (value: string): string => {
+    if (!value.trim()) return 'Email обязателен для заполнения';
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(value)) return 'Введите корректный email адрес';
+    return '';
+  };
+
+  // Handle email change
+  const handleEmailChange = (value: string) => {
+    setEmail(value);
+    // Clear error if user is typing
+    if (emailError) {
+      setEmailError('');
+    }
+  };
+
+  // Handle email blur validation
+  const handleEmailBlur = (value: string) => {
+    const error = validateEmail(value);
+    setEmailError(error);
+  };
+
+  // Get validation status
+  const getEmailStatus = () => {
+    if (emailError) return 'error';
+    if (email && !emailError) return 'success';
+    return 'idle';
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,18 +103,45 @@ export function NewsletterSubscription({ className, variant = 'default' }: Newsl
           </motion.div>
         ) : (
           <form onSubmit={handleSubmit} className="flex gap-2">
-            <Input
-              type="email"
-              placeholder="Ваш email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="flex-1"
-              required
-            />
-            <Button type="submit" loading={status === 'loading'}>
+            <div className="relative flex-1">
+              <Input
+                type="email"
+                placeholder="Ваш email"
+                value={email}
+                onChange={(e) => handleEmailChange(e.target.value)}
+                onBlur={(e) => handleEmailBlur(e.target.value)}
+                className={`
+                  flex-1
+                  ${
+                    getEmailStatus() === 'error'
+                      ? 'border-red-500 focus:border-red-500'
+                      : getEmailStatus() === 'success'
+                      ? 'border-green-500 focus:border-green-500'
+                      : ''
+                  }
+                `}
+                required
+              />
+              {getEmailStatus() === 'error' && (
+                <X className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-red-400" />
+              )}
+              {getEmailStatus() === 'success' && (
+                <CheckCircle className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-green-400" />
+              )}
+            </div>
+            <Button type="submit" loading={status === 'loading'} disabled={!!emailError}>
               Подписаться
             </Button>
           </form>
+        )}
+        {emailError && (
+          <motion.p
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-xs text-red-400 mt-1"
+          >
+            {emailError}
+          </motion.p>
         )}
       </div>
     );
@@ -124,23 +182,52 @@ export function NewsletterSubscription({ className, variant = 'default' }: Newsl
               </div>
             )}
             <div className="flex flex-col sm:flex-row gap-3">
-              <Input
-                type="email"
-                placeholder="Введите ваш email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="flex-1"
-                required
-              />
+              <div className="relative flex-1">
+                <Input
+                  type="email"
+                  placeholder="Введите ваш email"
+                  value={email}
+                  onChange={(e) => handleEmailChange(e.target.value)}
+                  onBlur={(e) => handleEmailBlur(e.target.value)}
+                  className={`
+                    flex-1
+                    pr-10
+                    ${
+                      getEmailStatus() === 'error'
+                        ? 'border-red-500 focus:border-red-500'
+                        : getEmailStatus() === 'success'
+                        ? 'border-green-500 focus:border-green-500'
+                        : ''
+                    }
+                  `}
+                  required
+                />
+                {getEmailStatus() === 'error' && (
+                  <X className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-red-400" />
+                )}
+                {getEmailStatus() === 'success' && (
+                  <CheckCircle className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-green-400" />
+                )}
+              </div>
               <Button
                 type="submit"
                 loading={status === 'loading'}
+                disabled={!!emailError}
                 className="sm:w-auto w-full"
                 rightIcon={ArrowRight}
               >
                 Подписаться
               </Button>
             </div>
+            {emailError && (
+              <motion.p
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-xs text-red-400"
+              >
+                {emailError}
+              </motion.p>
+            )}
             <p className="text-xs text-slate-400">
               Мы ценим вашу конфиденциальность. Вы можете отписаться в любое время.
             </p>

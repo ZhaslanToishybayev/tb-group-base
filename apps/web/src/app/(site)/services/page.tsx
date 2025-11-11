@@ -5,6 +5,32 @@ import { getServices, parseServiceContent } from '../../../lib/api';
 export const metadata = {
   title: 'Услуги — TB Group',
   description: 'Внедряем облачные решения: Мой Склад, Bitrix24 и корпоративную телефонию. Настраиваем процессы, автоматизируем и поддерживаем 24/7.',
+  alternates: {
+    languages: {
+      'ru-RU': '/services',
+      'en-US': '/en/services', // Future English version
+    },
+  },
+  openGraph: {
+    title: 'Услуги — TB Group',
+    description: 'Внедряем облачные решения: Мой Склад, Bitrix24 и корпоративную телефонию. Настраиваем процессы, автоматизируем и поддерживаем 24/7.',
+    type: 'website',
+    url: 'https://tb-group.kz/services',
+    images: [
+      {
+        url: '/api/og?type=service&title=Облачные сервисы TB Group&description=Мой Склад, Битрикс24 и корпоративная телефония',
+        width: 1200,
+        height: 630,
+        alt: 'Облачные сервисы TB Group',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Услуги — TB Group',
+    description: 'Внедряем облачные решения: Мой Склад, Bitrix24 и корпоративную телефонию. Настраиваем процессы, автоматизируем и поддерживаем 24/7.',
+    images: ['/api/og?type=service&title=Облачные сервисы TB Group&description=Мой Склад, Битрикс24 и корпоративная телефония'],
+  },
 };
 
 export default async function ServicesPage() {
