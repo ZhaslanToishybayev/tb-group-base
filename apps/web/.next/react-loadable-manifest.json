@@ -1,12 +1,14 @@
 {
   "components/sections/Hero.tsx -> ../three/HeroBackground": {
-    "id": "components/sections/Hero.tsx -> ../three/HeroBackground",
+    "id": 7260,
     "files": [
-      "static/chunks/_app-pages-browser_src_components_three_HeroBackground_tsx.js"
+      "static/chunks/9d78c252.b5967bccd606e1d0.js",
+      "static/chunks/711.7a39778c608e88e4.js",
+      "static/chunks/260.d225828df879f5e9.js"
     ]
   },
   "components/ui/Button.tsx -> ../analytics/GoogleAnalytics": {
-    "id": "components/ui/Button.tsx -> ../analytics/GoogleAnalytics",
+    "id": 2943,
     "files": []
   }
 }

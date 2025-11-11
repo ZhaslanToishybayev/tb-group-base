@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CaseStudyCard } from './CaseStudyCard';
 
 interface CaseStudy {
@@ -37,7 +37,7 @@ const mockCaseStudies: CaseStudy[] = [
     title: 'Внедрение Мой Склад в ритейле',
     company: 'Торговая сеть "Пятёрочка+"',
     summary: 'Оптимизация складских процессов и автоматизация учёта',
-    image: '/api/placeholder/800/600',
+    image: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&h=600&fit=crop',
     beforeMetrics: {
       efficiency: '45%',
       time: '6 часов/день',
@@ -51,9 +51,9 @@ const mockCaseStudies: CaseStudy[] = [
     tags: ['Мой Склад', 'ERP', 'Автоматизация'],
     slug: 'moy-sklad-retail-case',
     gallery: [
-      '/api/placeholder/1200/800',
-      '/api/placeholder/1200/800',
-      '/api/placeholder/1200/800',
+      'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1200&h=800&fit=crop',
+      'https://images.unsplash.com/photo-1553877522-43269d4ea984?w=1200&h=800&fit=crop',
+      'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&h=800&fit=crop',
     ],
   },
   {
@@ -61,7 +61,7 @@ const mockCaseStudies: CaseStudy[] = [
     title: 'Настройка Битрикс24 для B2B',
     company: 'ТехноСфера ООО',
     summary: 'Цифровизация продаж и автоматизация CRM-процессов',
-    image: '/api/placeholder/800/600',
+    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop',
     beforeMetrics: {
       efficiency: '38%',
       time: '8 часов/день',
@@ -75,9 +75,9 @@ const mockCaseStudies: CaseStudy[] = [
     tags: ['Битрикс24', 'CRM', 'B2B'],
     slug: 'bitrix24-b2b-case',
     gallery: [
-      '/api/placeholder/1200/800',
-      '/api/placeholder/1200/800',
-      '/api/placeholder/1200/800',
+      'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&h=800&fit=crop',
+      'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&h=800&fit=crop',
+      'https://images.unsplash.com/photo-1553877522-43269d4ea984?w=1200&h=800&fit=crop',
     ],
   },
   {
@@ -85,7 +85,7 @@ const mockCaseStudies: CaseStudy[] = [
     title: 'Корпоративная телефония',
     company: 'СтройМастер',
     summary: 'Внедрение IP-телефонии и интеграция с CRM',
-    image: '/api/placeholder/800/600',
+    image: 'https://images.unsplash.com/photo-1553877522-43269d4ea984?w=800&h=600&fit=crop',
     beforeMetrics: {
       efficiency: '42%',
       time: '7 часов/день',
@@ -99,15 +99,41 @@ const mockCaseStudies: CaseStudy[] = [
     tags: ['Телефония', 'IP', 'Интеграция'],
     slug: 'telephony-integration-case',
     gallery: [
-      '/api/placeholder/1200/800',
-      '/api/placeholder/1200/800',
-      '/api/placeholder/1200/800',
+      'https://images.unsplash.com/photo-1553877522-43269d4ea984?w=1200&h=800&fit=crop',
+      'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&h=800&fit=crop',
+      'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1200&h=800&fit=crop',
     ],
   },
 ];
 
 export function CaseStudiesSection({ caseStudies = mockCaseStudies }: CaseStudiesSectionProps) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
+
+  const allImages = caseStudies.flatMap(cs => cs.gallery || []);
+
+  const navigateImage = (direction: 'prev' | 'next') => {
+    if (allImages.length === 0) return;
+
+    if (direction === 'prev') {
+      setCurrentImageIndex((prev) => (prev > 0 ? prev - 1 : allImages.length - 1));
+    } else {
+      setCurrentImageIndex((prev) => (prev < allImages.length - 1 ? prev + 1 : 0));
+    }
+  };
+
+  const handleImageSelect = (image: string) => {
+    setSelectedImage(image);
+    const index = allImages.indexOf(image);
+    setCurrentImageIndex(index >= 0 ? index : 0);
+  };
+
+  // Sync selectedImage with currentImageIndex
+  useEffect(() => {
+    if (allImages.length > 0 && selectedImage) {
+      setSelectedImage(allImages[currentImageIndex]);
+    }
+  }, [currentImageIndex, allImages, selectedImage]);
 
   return (
     <section className="py-24 bg-gradient-to-b from-slate-900 to-slate-950" id="case-studies">
@@ -156,7 +182,7 @@ export function CaseStudiesSection({ caseStudies = mockCaseStudies }: CaseStudie
               key={caseStudy.id}
               caseStudy={caseStudy}
               index={index}
-              onImageClick={setSelectedImage}
+              onImageClick={handleImageSelect}
             />
           ))}
         </div>
@@ -235,8 +261,9 @@ export function CaseStudiesSection({ caseStudies = mockCaseStudies }: CaseStudie
               className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-3 text-white backdrop-blur-sm transition hover:bg-white/20"
               onClick={(e) => {
                 e.stopPropagation();
-                // TODO: Implement prev image logic
+                navigateImage('prev');
               }}
+              aria-label="Предыдущее изображение"
             >
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -247,13 +274,19 @@ export function CaseStudiesSection({ caseStudies = mockCaseStudies }: CaseStudie
               className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-3 text-white backdrop-blur-sm transition hover:bg-white/20"
               onClick={(e) => {
                 e.stopPropagation();
-                // TODO: Implement next image logic
+                navigateImage('next');
               }}
+              aria-label="Следующее изображение"
             >
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </button>
+
+            {/* Image Counter */}
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full bg-black/50 backdrop-blur-sm text-white text-sm">
+              {currentImageIndex + 1} / {allImages.length}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
