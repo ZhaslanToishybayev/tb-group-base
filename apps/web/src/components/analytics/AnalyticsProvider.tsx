@@ -29,9 +29,6 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
     if (typeof window !== 'undefined' && (window as any).gtag) {
       (window as any).gtag('event', eventName, properties);
     }
-
-    // Custom analytics
-    console.log('Analytics Event:', eventName, properties);
   };
 
   const trackPageView = (page: string) => {
@@ -41,9 +38,6 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
         page_path: page,
       });
     }
-
-    // Custom analytics
-    console.log('Page View:', page);
   };
 
   return (

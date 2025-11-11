@@ -246,7 +246,6 @@ export const WithForm: Story = {
     
     const handleSubmit = (e: React.FormEvent) => {
       e.preventDefault();
-      console.log('Form submitted:', formData);
       setOpen(false);
     };
     

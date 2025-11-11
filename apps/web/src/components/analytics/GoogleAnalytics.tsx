@@ -86,9 +86,6 @@ export const trackEvent = (eventName: string, parameters: Record<string, any> = 
   if (typeof window !== 'undefined' && (window as any).ym) {
     (window as any).ym(YANDEX_ID, 'reachGoal', eventName, parameters);
   }
-
-  // Custom analytics
-  console.log('Analytics Event:', eventName, parameters);
 };
 
 // Функция для отслеживания просмотра страниц

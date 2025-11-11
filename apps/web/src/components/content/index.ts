@@ -1,4 +1,3 @@
-export { AnimatedCounters } from './AnimatedCounters';
 export { CaseStudyHero } from './CaseStudyHero';
 export { CompanyStory, type StoryParagraph, type Milestone } from './CompanyStory';
 export { FAQAccordion } from './FAQAccordion';

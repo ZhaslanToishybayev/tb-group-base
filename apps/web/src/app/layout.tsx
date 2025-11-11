@@ -17,7 +17,6 @@ const jetbrainsMono = JetBrains_Mono({
   variable: '--font-jetbrains-mono',
 });
 
-export { inter, jetbrainsMono };
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import { LiveChatWidget } from '../components/LiveChatWidget';
