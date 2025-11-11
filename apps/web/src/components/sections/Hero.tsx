@@ -43,75 +43,49 @@ export function Hero() {
     { value: 99, label: 'Успешность проектов', suffix: '%' },
   ];
 
-  // Parallax transforms based on scroll
-  const { scrollY } = useScroll();
-  const backgroundY = useTransform(scrollY, [0, 1000], [0, -300]);
-  const contentY = useTransform(scrollY, [0, 1000], [0, -150]);
-  const titleY = useTransform(scrollY, [0, 1000], [0, -100]);
+  // OPTIMIZED: Disabled heavy useScroll/useTransform that cause lag
+  // TODO: Consider implementing with Intersection Observer instead
+  // const { scrollY } = useScroll();
+  // const backgroundY = useTransform(scrollY, [0, 1000], [0, -300]);
+  // const contentY = useTransform(scrollY, [0, 1000], [0, -150]);
+  // const titleY = useTransform(scrollY, [0, 1000], [0, -100]);
 
   return (
     <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Parallax Background Container */}
-      <motion.div
-        style={{ y: prefersReducedMotion ? 0 : backgroundY }}
-        className="absolute inset-0 w-full h-full"
-      >
+      {/* OPTIMIZED: Static background without parallax */}
+      <div className="absolute inset-0 w-full h-full">
         {/* 3D Background - loaded dynamically */}
         <Suspense fallback={
           <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-slate-900 to-slate-950" />
         }>
           <HeroBackground />
         </Suspense>
-      </motion.div>
+      </div>
 
-      {/* Content Container with Parallax */}
-      <motion.div
-        style={{ y: prefersReducedMotion ? 0 : contentY }}
-        className="relative z-10 max-w-7xl mx-auto px-6 py-32"
-      >
+      {/* Content Container */}
+      <div className="relative z-10 max-w-7xl mx-auto px-6 py-32">
         <div className="text-center space-y-8">
-          {/* Main Headline with Independent Parallax */}
-          <motion.h1
-            style={{ y: prefersReducedMotion ? 0 : titleY }}
-            className="text-5xl md:text-7xl lg:text-8xl font-bold text-white leading-tight"
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: 'easeOut' }}
-          >
+          {/* Main Headline - OPTIMIZED: Simplified animation */}
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-white leading-tight">
             <span className="block">
               {displayText}
               {!isComplete && (
                 <span className="inline-block w-1 h-[1em] bg-primary-500 ml-2 animate-pulse" />
               )}
             </span>
-          </motion.h1>
+          </h1>
 
-          {/* Gradient underline */}
-          <motion.div
-            className="h-1 w-32 bg-gradient-to-r from-primary-500 via-secondary-500 to-neon-cyan mx-auto rounded-full"
-            initial={{ width: 0, opacity: 0 }}
-            animate={{ width: 128, opacity: 1 }}
-            transition={{ delay: 1, duration: 0.8 }}
-          />
+          {/* Gradient underline - OPTIMIZED: Static instead of animated */}
+          <div className="h-1 w-32 bg-gradient-to-r from-primary-500 via-secondary-500 to-neon-cyan mx-auto rounded-full" />
 
-          {/* Subheadline */}
-          <motion.p
-            className="text-xl md:text-2xl text-slate-300 max-w-3xl mx-auto leading-relaxed"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.8 }}
-          >
+          {/* Subheadline - OPTIMIZED: Static instead of animated */}
+          <p className="text-xl md:text-2xl text-slate-300 max-w-3xl mx-auto leading-relaxed">
             Официальный партнер Мой Склад и Битрикс24 в Казахстане.
             Автоматизируем складской и торговый учет, внедряем CRM и телефонию под ключ.
-          </motion.p>
+          </p>
 
-          {/* CTA Buttons */}
-          <motion.div
-            className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-8"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1, duration: 0.8 }}
-          >
+          {/* CTA Buttons - OPTIMIZED: Static instead of animated */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-8">
             <Button
               variant="gradient"
               size="lg"
@@ -129,38 +103,21 @@ export function Hero() {
             >
               Наши решения
             </Button>
-          </motion.div>
+          </div>
 
-          {/* Animated Stats Counters */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.5, duration: 0.8 }}
-          >
-            <AnimatedCounters data={stats} className="pt-16" />
-          </motion.div>
+          {/* Animated Stats Counters - OPTIMIZED: Static */}
+          <div className="pt-16">
+            <AnimatedCounters data={stats} className="" />
+          </div>
         </div>
-      </motion.div>
+      </div>
 
-      {/* Scroll indicator */}
-      <motion.div
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.5, duration: 0.8 }}
-      >
-        <motion.div
-          className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center"
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-        >
-          <motion.div
-            className="w-1 h-3 bg-primary-500 rounded-full mt-2"
-            animate={{ y: [0, 12, 0] }}
-            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-          />
-        </motion.div>
-      </motion.div>
+      {/* Scroll indicator - OPTIMIZED: Static instead of animated */}
+      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
+        <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center">
+          <div className="w-1 h-3 bg-primary-500 rounded-full mt-2 animate-bounce" />
+        </div>
+      </div>
     </section>
   );
 }

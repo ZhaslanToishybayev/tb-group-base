@@ -5,13 +5,14 @@ import React, { useState, useEffect } from 'react';
 import { TestimonialCard } from './TestimonialCard';
 
 // Sample testimonials data
+// OPTIMIZED: Using lightweight avatar colors instead of heavy images
 const testimonials = [
   {
     id: '1',
     name: 'Александр Петров',
     position: 'Директор',
     company: 'ТоргСервис',
-    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face',
+    avatar: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNTAiIGZpbGw9IiMxYTQzYWYiLz4KICA8dGV4dCB4PSI1MCIgeT0iNjAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIzNiIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+QUw8L3RleHQ+Cjwvc3ZnPg==',
     quote: 'Внедрение Мой Склад полностью трансформировало наши складские процессы. Теперь мы экономим 4 часа в день на рутинных операциях.',
     rating: 5,
   },
@@ -20,7 +21,7 @@ const testimonials = [
     name: 'Мария Иванова',
     position: 'Руководитель отдела продаж',
     company: 'ТехноТрейд',
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face',
+    avatar: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNTAiIGZpbGw9IiM4YTVhZWYiLz4KICA8dGV4dCB4PSI1MCIgeT0iNjAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIzNiIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+TUo8L3RleHQ+Cjwvc3ZnPg==',
     quote: 'Благодаря настройке Битрикс24 наша конверсия выросла на 40%. CRM-процессы стали максимально прозрачными.',
     rating: 5,
   },
@@ -29,7 +30,7 @@ const testimonials = [
     name: 'Дмитрий Козлов',
     position: 'IT-директор',
     company: 'СтройМастер',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face',
+    avatar: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNTAiIGZpbGw9IiMyNTYzZWIiLz4KICA8dGV4dCB4PSI1MCIgeT0iNjAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIzMiIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+REs8L3RleHQ+Cjwvc3ZnPg==',
     quote: 'Корпоративная телефония позволила нам сократить расходы на связь на 30% и значительно улучшить качество коммуникации.',
     rating: 5,
   },
@@ -38,7 +39,7 @@ const testimonials = [
     name: 'Елена Смирнова',
     position: 'Операционный директор',
     company: 'ЛогистПлюс',
-    avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face',
+    avatar: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNTAiIGZpbGw9IiNmOTU5ZTAiLz4KICA8dGV4dCB4PSI1MCIgeT0iNjAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIzMiIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+U0M8L3RleHQ+Cjwvc3ZnPg==',
     quote: 'Интеграция всех систем через Битрикс24 дала нам полную картину бизнеса. Управление стало намного эффективнее.',
     rating: 5,
   },
