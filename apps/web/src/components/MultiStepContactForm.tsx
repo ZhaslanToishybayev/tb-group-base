@@ -7,6 +7,7 @@ import { Check } from 'lucide-react';
 
 import { submitContact, type ContactRequestPayload } from '../lib/api';
 import { CaptchaGate } from './CaptchaGate';
+import { validateName, validateEmail, validatePhone } from '../lib/validation';
 
 type FormData = {
   fullName: string;
@@ -139,7 +140,10 @@ export function MultiStepContactForm({
         return;
       } else {
         // If reCAPTCHA is enabled but trigger not found, continue without it
-        console.warn('reCAPTCHA enabled but trigger not found, continuing without verification');
+        if (process.env.NODE_ENV === 'development') {
+          // eslint-disable-next-line no-console
+          console.warn('reCAPTCHA enabled but trigger not found, continuing without verification');
+        }
       }
     }
 
@@ -238,11 +242,9 @@ export function MultiStepContactForm({
                     <input
                       {...register('fullName', {
                         required: 'Пожалуйста, введите ваше имя и фамилию',
-                        minLength: {
-                          value: 2,
-                          message: 'Имя должно содержать минимум 2 символа',
-                        },
+                        validate: (value) => validateName(value) || true,
                       })}
+                      autoComplete="name"
                       className={`w-full rounded border bg-slate-900/60 px-4 py-3 text-white transition-colors ${
                         errors.fullName
                           ? 'border-red-500/50 focus:border-red-500'
@@ -285,11 +287,9 @@ export function MultiStepContactForm({
                       type="email"
                       {...register('email', {
                         required: 'Пожалуйста, введите email',
-                        pattern: {
-                          value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                          message: 'Пожалуйста, введите корректный email',
-                        },
+                        validate: (value) => validateEmail(value) || true,
                       })}
+                      autoComplete="email"
                       className={`w-full rounded border bg-slate-900/60 px-4 py-3 text-white transition-colors ${
                         errors.email
                           ? 'border-red-500/50 focus:border-red-500'
@@ -329,13 +329,12 @@ export function MultiStepContactForm({
                       Телефон <span className="text-red-400">*</span>
                     </label>
                     <input
+                      type="tel"
                       {...register('phone', {
                         required: 'Пожалуйста, введите номер телефона',
-                        pattern: {
-                          value: /^[+]?[0-9\s\-()]{10,}$/,
-                          message: 'Пожалуйста, введите корректный номер телефона',
-                        },
+                        validate: (value) => validatePhone(value) || true,
                       })}
+                      autoComplete="tel"
                       className={`w-full rounded border bg-slate-900/60 px-4 py-3 text-white transition-colors ${
                         errors.phone
                           ? 'border-red-500/50 focus:border-red-500'
@@ -343,7 +342,9 @@ export function MultiStepContactForm({
                           ? 'border-green-500/50 focus:border-green-500'
                           : 'border-white/10 focus:border-blue-500'
                       } focus:outline-none focus:ring-2 focus:ring-blue-500/20`}
-                      placeholder="+7 (700) 123-45-67"
+                      placeholder="+7 XXX XXX XX XX"
+                      aria-invalid={!!errors.phone}
+                      aria-describedby={errors.phone ? 'phone-error-multistep' : undefined}
                     />
                     <AnimatePresence>
                       {errors.phone && (

@@ -1,3 +1,5 @@
+import { retryWithBackoff, type RetryOptions } from './retry';
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:4000';
 
 // Use relative URL for same-origin requests (works on Vercel)
@@ -10,40 +12,70 @@ const getApiUrl = (path: string) => {
   return `${API_BASE_URL}${path.startsWith('/') ? path : `/${path}`}`;
 };
 
-// Retry configuration
-const DEFAULT_RETRY_COUNT = 3;
+// Default retry configuration
+const DEFAULT_RETRY_OPTIONS: RetryOptions = {
+  maxAttempts: 3,
+  initialDelay: 1000,
+  maxDelay: 10000,
+  backoffFactor: 2,
+  shouldRetry: (error: Error) => {
+    // Only retry on network errors and 5xx server errors
+    return (
+      error instanceof TypeError ||
+      error.message.includes('fetch') ||
+      error.message.includes('5') ||
+      error.message.includes('timeout')
+    );
+  },
+  onRetry: (error: Error, attempt: number, delay: number) => {
+    if (process.env.NODE_ENV === 'development') {
+      // eslint-disable-next-line no-console
+      console.log(`[API] Retrying request (attempt ${attempt}) after ${delay}ms:`, error.message);
+    }
+  },
+};
 
-async function apiFetch<T>(path: string, init?: RequestInit, retryCount: number = 0): Promise<T> {
-  try {
+async function apiFetch<T>(
+  path: string,
+  init?: RequestInit,
+  retryOptions?: Partial<RetryOptions>
+): Promise<T> {
+  const mergedOptions = { ...DEFAULT_RETRY_OPTIONS, ...retryOptions };
+
+  return retryWithBackoff(async () => {
     const url = getApiUrl(path);
-    const res = await fetch(url, {
-      next: { revalidate: 120 },
-      ...init,
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        ...(init?.headers ?? {}),
-      },
-      // Add timeout
-      signal: AbortSignal.timeout(30000),
-    });
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000);
 
-    if (!res.ok) {
-      const errorData = await res.json().catch(() => ({}));
-      const errorMessage = errorData.error?.message || errorData.message || `API request failed: ${res.status}`;
-      throw new Error(errorMessage);
-    }
+    try {
+      const res = await fetch(url, {
+        next: { revalidate: 120 },
+        ...init,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          ...(init?.headers ?? {}),
+        },
+        signal: controller.signal,
+      });
 
-    const json = (await res.json()) as { data: T };
-    return json.data;
-  } catch (error) {
-    // Retry on network errors (but not on 4xx errors)
-    if (retryCount < DEFAULT_RETRY_COUNT && error instanceof TypeError) {
-      await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1)));
-      return apiFetch<T>(path, init, retryCount + 1);
+      clearTimeout(timeoutId);
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        const errorMessage = errorData.error?.message || errorData.message || `API request failed: ${res.status}`;
+        const error = new Error(errorMessage) as Error & { status?: number };
+        error.status = res.status;
+        throw error;
+      }
+
+      const json = (await res.json()) as { data: T };
+      return json.data;
+    } catch (error) {
+      clearTimeout(timeoutId);
+      throw error;
     }
-    throw error;
-  }
+  }, mergedOptions);
 }
 
 export async function getServices() {

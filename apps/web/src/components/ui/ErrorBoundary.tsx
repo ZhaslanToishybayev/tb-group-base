@@ -25,8 +25,11 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    // Log error for debugging
-    console.error('ErrorBoundary caught an error:', error, errorInfo);
+    // Log error for debugging in development only
+    if (process.env.NODE_ENV === 'development') {
+      // eslint-disable-next-line no-console
+      console.error('ErrorBoundary caught an error:', error, errorInfo);
+    }
 
     // Error tracking integration
     try {
@@ -57,8 +60,11 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
         });
       }
     } catch (trackingError) {
-      // Avoid infinite error loop
-      console.error('Failed to send error to tracking service:', trackingError);
+      // Avoid infinite error loop - only log in development
+      if (process.env.NODE_ENV === 'development') {
+        // eslint-disable-next-line no-console
+        console.error('Failed to send error to tracking service:', trackingError);
+      }
     }
   }
 

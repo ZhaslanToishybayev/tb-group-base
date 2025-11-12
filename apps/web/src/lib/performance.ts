@@ -136,20 +136,34 @@ export const performanceMonitoring = {
     return () => {
       const end = performance.now();
       const duration = end - start;
-      console.log(`[Performance] ${name} render time: ${duration.toFixed(2)}ms`);
+      
+      // Only log in development
+      if (process.env.NODE_ENV === 'development') {
+        // eslint-disable-next-line no-console
+        console.log(`[Performance] ${name} render time: ${duration.toFixed(2)}ms`);
+      }
+      
       return duration;
     };
   },
 
   // Observe performance metrics
-  observeMetrics() {
+  observeMetrics(callback?: (metric: { name: string; value: number }) => void) {
     if (typeof window === 'undefined' || !window.PerformanceObserver) return;
+
+    const isDev = process.env.NODE_ENV === 'development';
 
     // Largest Contentful Paint
     const lcpObserver = new PerformanceObserver((entryList) => {
       const entries = entryList.getEntries();
       const lastEntry = entries[entries.length - 1];
-      console.log('[Performance] LCP:', lastEntry.startTime);
+      const value = lastEntry.startTime;
+      
+      if (isDev) {
+        // eslint-disable-next-line no-console
+        console.log('[Performance] LCP:', value);
+      }
+      callback?.({ name: 'LCP', value });
     });
     lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
 
@@ -157,7 +171,13 @@ export const performanceMonitoring = {
     const fidObserver = new PerformanceObserver((entryList) => {
       const entries = entryList.getEntries();
       entries.forEach((entry: any) => {
-        console.log('[Performance] FID:', entry.processingStart - entry.startTime);
+        const value = entry.processingStart - entry.startTime;
+        
+        if (isDev) {
+          // eslint-disable-next-line no-console
+          console.log('[Performance] FID:', value);
+        }
+        callback?.({ name: 'FID', value });
       });
     });
     fidObserver.observe({ entryTypes: ['first-input'] });
@@ -171,7 +191,12 @@ export const performanceMonitoring = {
           clsValue += entry.value;
         }
       });
-      console.log('[Performance] CLS:', clsValue);
+      
+      if (isDev) {
+        // eslint-disable-next-line no-console
+        console.log('[Performance] CLS:', clsValue);
+      }
+      callback?.({ name: 'CLS', value: clsValue });
     });
     clsObserver.observe({ entryTypes: ['layout-shift'] });
 

@@ -1,10 +1,12 @@
 'use client';
 
-import { useState, type FormEvent } from 'react';
+import { useState, type FormEvent, useCallback } from 'react';
 
 import { submitContact, type ContactRequestPayload } from '../lib/api';
 import { CaptchaGate } from './CaptchaGate';
 import { trackEvent, GA_EVENTS } from './analytics/GoogleAnalytics';
+import { validateName, validateEmail, validatePhone, validateContactForm } from '../lib/validation';
+import { useDebouncedCallback } from '../hooks/useDebounce';
 
 type ContactFormProps = {
   defaultServiceInterest?: string;
@@ -17,6 +19,8 @@ type FormErrors = {
   fullName?: string;
   email?: string;
   phone?: string;
+  company?: string;
+  message?: string;
   general?: string;
 };
 
@@ -27,33 +31,34 @@ function ContactFormInner({ defaultServiceInterest, hideServiceSelect = false }:
   const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
   const [showAdditional, setShowAdditional] = useState(false);
 
-  const validateForm = (formData: FormData): FormErrors => {
-    const errors: FormErrors = {};
+  // Debounced field validation for better UX
+  const validateField = useDebouncedCallback((field: string, value: string) => {
+    let error: string | null = null;
     
-    const fullName = String(formData.get('fullName') ?? '').trim();
-    const email = String(formData.get('email') ?? '').trim();
-    const phone = String(formData.get('phone') ?? '').trim();
-
-    if (!fullName) {
-      errors.fullName = 'Пожалуйста, введите ваше имя и фамилию';
-    } else if (fullName.length < 2) {
-      errors.fullName = 'Имя должно содержать минимум 2 символа';
+    switch (field) {
+      case 'fullName':
+        error = validateName(value);
+        break;
+      case 'email':
+        error = validateEmail(value);
+        break;
+      case 'phone':
+        error = validatePhone(value);
+        break;
     }
 
-    if (!email) {
-      errors.email = 'Пожалуйста, введите email';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      errors.email = 'Пожалуйста, введите корректный email';
-    }
+    setFormErrors(prev => ({
+      ...prev,
+      [field]: error || undefined,
+    }));
+  }, 300);
 
-    if (!phone) {
-      errors.phone = 'Пожалуйста, введите номер телефона';
-    } else if (!/^[+]?[0-9\s\-()]{10,}$/.test(phone.replace(/\s/g, ''))) {
-      errors.phone = 'Пожалуйста, введите корректный номер телефона';
-    }
-
-    return errors;
-  };
+  const handleFieldChange = useCallback((field: string, value: string) => {
+    // Clear error immediately on change
+    setFormErrors(prev => ({ ...prev, [field]: undefined }));
+    // Validate after debounce
+    validateField(field, value);
+  }, [validateField]);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -69,16 +74,24 @@ function ContactFormInner({ defaultServiceInterest, hideServiceSelect = false }:
       service_interest: formData.get('serviceInterest')?.toString() || defaultServiceInterest,
     });
 
-    // Validate form
-    const errors = validateForm(formData);
-    if (Object.keys(errors).length > 0) {
-      setFormErrors(errors);
+    // Validate form using centralized validation
+    const validationResult = validateContactForm({
+      fullName: String(formData.get('fullName') ?? ''),
+      email: String(formData.get('email') ?? ''),
+      phone: String(formData.get('phone') ?? ''),
+      company: formData.get('company')?.toString(),
+      message: formData.get('message')?.toString(),
+      serviceInterest: formData.get('serviceInterest')?.toString() || defaultServiceInterest,
+    });
+
+    if (!validationResult.isValid) {
+      setFormErrors(validationResult.errors);
       setStatus('error');
 
       // Track validation errors
       trackEvent(GA_EVENTS.FORM_ERROR, {
         form_name: 'contact_form',
-        error_fields: Object.keys(errors).join(', '),
+        error_fields: Object.keys(validationResult.errors).join(', '),
       });
       return;
     }
@@ -147,15 +160,19 @@ function ContactFormInner({ defaultServiceInterest, hideServiceSelect = false }:
             required
             id="fullName"
             name="fullName"
-            className={`rounded border bg-slate-900/60 px-3 py-2 ${
+            className={`rounded border bg-slate-900/60 px-3 py-2 transition-colors ${
               formErrors.fullName
-                ? 'border-red-500/50 text-red-300'
-                : 'border-white/10 text-white'
+                ? 'border-red-500/50 text-red-300 focus:border-red-500'
+                : 'border-white/10 text-white focus:border-blue-500'
             }`}
-            onChange={() => setFormErrors(prev => ({ ...prev, fullName: undefined }))}
+            onChange={(e) => handleFieldChange('fullName', e.target.value)}
+            aria-invalid={!!formErrors.fullName}
+            aria-describedby={formErrors.fullName ? 'fullName-error' : undefined}
           />
           {formErrors.fullName && (
-            <p className="text-xs text-red-400">{formErrors.fullName}</p>
+            <p id="fullName-error" className="text-xs text-red-400" role="alert">
+              {formErrors.fullName}
+            </p>
           )}
         </div>
         
@@ -168,15 +185,20 @@ function ContactFormInner({ defaultServiceInterest, hideServiceSelect = false }:
             id="email"
             name="email"
             type="email"
-            className={`rounded border bg-slate-900/60 px-3 py-2 ${
+            autoComplete="email"
+            className={`rounded border bg-slate-900/60 px-3 py-2 transition-colors ${
               formErrors.email
-                ? 'border-red-500/50 text-red-300'
-                : 'border-white/10 text-white'
+                ? 'border-red-500/50 text-red-300 focus:border-red-500'
+                : 'border-white/10 text-white focus:border-blue-500'
             }`}
-            onChange={() => setFormErrors(prev => ({ ...prev, email: undefined }))}
+            onChange={(e) => handleFieldChange('email', e.target.value)}
+            aria-invalid={!!formErrors.email}
+            aria-describedby={formErrors.email ? 'email-error' : undefined}
           />
           {formErrors.email && (
-            <p className="text-xs text-red-400">{formErrors.email}</p>
+            <p id="email-error" className="text-xs text-red-400" role="alert">
+              {formErrors.email}
+            </p>
           )}
         </div>
         
@@ -188,15 +210,22 @@ function ContactFormInner({ defaultServiceInterest, hideServiceSelect = false }:
             required
             id="phone"
             name="phone"
-            className={`rounded border bg-slate-900/60 px-3 py-2 ${
+            type="tel"
+            autoComplete="tel"
+            placeholder="+7 XXX XXX XX XX"
+            className={`rounded border bg-slate-900/60 px-3 py-2 transition-colors ${
               formErrors.phone
-                ? 'border-red-500/50 text-red-300'
-                : 'border-white/10 text-white'
+                ? 'border-red-500/50 text-red-300 focus:border-red-500'
+                : 'border-white/10 text-white focus:border-blue-500'
             }`}
-            onChange={() => setFormErrors(prev => ({ ...prev, phone: undefined }))}
+            onChange={(e) => handleFieldChange('phone', e.target.value)}
+            aria-invalid={!!formErrors.phone}
+            aria-describedby={formErrors.phone ? 'phone-error' : undefined}
           />
           {formErrors.phone && (
-            <p className="text-xs text-red-400">{formErrors.phone}</p>
+            <p id="phone-error" className="text-xs text-red-400" role="alert">
+              {formErrors.phone}
+            </p>
           )}
         </div>
         

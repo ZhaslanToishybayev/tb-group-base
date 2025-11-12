@@ -30,7 +30,10 @@ export function CaptchaGate({ onToken, children }: CaptchaGateProps) {
           executeRecaptcha();
         }
       } catch (error) {
-        console.error('reCAPTCHA execution failed:', error);
+        if (process.env.NODE_ENV === 'development') {
+          // eslint-disable-next-line no-console
+          console.error('reCAPTCHA execution failed:', error);
+        }
         // Fallback: proceed without token
         onToken('fallback-token');
       }
@@ -49,7 +52,10 @@ export function CaptchaGate({ onToken, children }: CaptchaGateProps) {
             onToken(token);
           })
           .catch((error: any) => {
-            console.error('reCAPTCHA execution failed:', error);
+            if (process.env.NODE_ENV === 'development') {
+              // eslint-disable-next-line no-console
+              console.error('reCAPTCHA execution failed:', error);
+            }
             onToken('fallback-token');
           });
       });
