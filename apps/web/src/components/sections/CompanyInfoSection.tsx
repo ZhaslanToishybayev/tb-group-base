@@ -135,14 +135,27 @@ export function CompanyInfoSection() {
               </div>
             </div>
             <div className="relative">
-              <div className="aspect-square rounded-2xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center">
-                <div className="text-center">
-                  <div className="text-5xl font-bold text-white mb-2">5+</div>
-                  <div className="text-slate-300">лет на рынке</div>
+              <div className="aspect-square rounded-2xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center border border-blue-500/30 overflow-hidden">
+                <div className="text-center relative z-10">
+                  <div className="text-6xl md:text-7xl font-bold text-white mb-3 drop-shadow-2xl">5+</div>
+                  <div className="text-slate-200 text-lg font-medium">лет на рынке</div>
+                  <div className="mt-4 text-sm text-slate-300">с 2019 года</div>
                 </div>
+                {/* Animated background circles */}
+                <motion.div 
+                  className="absolute top-0 left-0 w-full h-full opacity-20"
+                  animate={{
+                    background: [
+                      'radial-gradient(circle at 0% 0%, #3b82f6 0%, transparent 50%)',
+                      'radial-gradient(circle at 100% 100%, #06b6d4 0%, transparent 50%)',
+                      'radial-gradient(circle at 0% 0%, #3b82f6 0%, transparent 50%)',
+                    ]
+                  }}
+                  transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
+                />
               </div>
-              <div className="absolute -top-4 -right-4 w-24 h-24 rounded-full bg-gradient-to-br from-blue-500/30 to-cyan-500/30 blur-xl" />
-              <div className="absolute -bottom-4 -left-4 w-32 h-32 rounded-full bg-gradient-to-br from-cyan-500/20 to-blue-500/20 blur-xl" />
+              <div className="absolute -top-4 -right-4 w-24 h-24 rounded-full bg-gradient-to-br from-blue-500/30 to-cyan-500/30 blur-xl animate-pulse" />
+              <div className="absolute -bottom-4 -left-4 w-32 h-32 rounded-full bg-gradient-to-br from-cyan-500/20 to-blue-500/20 blur-xl animate-pulse" style={{animationDelay: '1s'}} />
             </div>
           </div>
         </motion.div>

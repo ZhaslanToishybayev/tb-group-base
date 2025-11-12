@@ -49,10 +49,13 @@ export function StatsGrid({ stats, className, columns = 4 }: StatsGridProps) {
 }
 
 function StatCard({ stat, index, inView }: { stat: Stat; index: number; inView: boolean }) {
-  const [count, setCount] = React.useState(0);
+  const [count, setCount] = React.useState(stat.value);
+  const [hasAnimated, setHasAnimated] = React.useState(false);
 
   React.useEffect(() => {
-    if (inView) {
+    if (inView && !hasAnimated) {
+      setHasAnimated(true);
+      setCount(0); // Start from 0 only when animation begins
       const duration = 2000; // 2 seconds
       const steps = 60;
       const increment = stat.value / steps;
@@ -70,7 +73,7 @@ function StatCard({ stat, index, inView }: { stat: Stat; index: number; inView: 
 
       return () => clearInterval(timer);
     }
-  }, [inView, stat.value]);
+  }, [inView, stat.value, hasAnimated]);
 
   return (
     <motion.div

@@ -118,9 +118,17 @@ export function TestimonialCard({ testimonial, index, total }: TestimonialCardPr
             </div>
 
             {/* Quote */}
-            <blockquote className="mb-6 flex-1 text-slate-200">
+            <blockquote className="mb-4 flex-1 text-slate-200">
               "{testimonial.quote}"
             </blockquote>
+
+            {/* Read More Button */}
+            <button className="mb-4 self-start text-sm font-semibold text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-1 group">
+              Подробнее
+              <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
 
             {/* Author */}
             <div className="flex items-center gap-4 border-t border-white/10 pt-4">
